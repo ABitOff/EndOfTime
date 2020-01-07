@@ -1,0 +1,1 @@
+this file exists to force git to push the src/test/resources directory, in order to prevent classpath errors

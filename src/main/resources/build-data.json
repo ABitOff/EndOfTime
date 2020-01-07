@@ -1,0 +1,19 @@
+{
+    "mod-version": "0.1.0",
+    "mc-version": "1.14.4",
+    "mod-name": "End of Time",
+    "group": "org.abitoff.mc.eot",
+    "mod-id": "eot",
+    "mappings": {
+        "channel": "snapshot",
+        "version": "20190719-1.14.3"
+    },
+    "forge-version": "28.1.0",
+    "homepage": "https://github.com/ABitOff/EndOfTime",
+    "org-name": "A Bit Off",
+    "repo": "ABitOff/EndOfTime",
+    "credits": "",
+    "authors": ["Steven Fontaine"],
+    "description": "TODO",
+    "mod-dependencies": []
+}

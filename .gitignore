@@ -1,0 +1,17 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+hs_err_pid*
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+mods.toml

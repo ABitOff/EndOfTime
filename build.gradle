@@ -1,0 +1,221 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+import org.kohsuke.github.GitHubBuilder
+
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.kohsuke:github-api:1.101'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'groovy'
+
+println buildDir
+
+def buildData = readJson("$projectDir/src/main/resources/build-data.json")
+def mcversion = buildData."mc-version"
+def modversion = buildData."mod-version"
+def modname = buildData."mod-name"
+version = "$mcversion-$modversion"
+group = buildData.group
+archivesBaseName = buildData."mod-id"
+writeModsToml(buildData)
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+minecraft {
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: buildData.mappings.channel, version: buildData.mappings.version
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                eot {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                eot {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'eot', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                eot {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${buildData."mc-version"}-${buildData."forge-version"}"
+    implementation 'com.google.code.gson:gson:2.8.+'
+    testImplementation 'junit:junit:4.12'
+}
+
+build {
+	dependsOn "writeUpdateJson"
+}
+
+task writeUpdateJson {
+	doLast {
+		def changelog = readJson("$projectDir/changelog.json")
+		def latest = [
+			"homepage": buildData.homepage,
+			*: changelog,
+			"promos": getPromos(buildData)
+		]
+		file("$buildDir/latest.json").text = JsonOutput.toJson(latest)
+	}
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": modname,
+            "Specification-Vendor": buildData."org-name",
+            "Specification-Version": modversion,
+            "Implementation-Title": modname,
+            "Implementation-Version": modversion,
+            "Implementation-Vendor" : buildData."org-name",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+def readJson(f) {
+    return new JsonSlurper().parseText(file(f).text);
+}
+
+def writeModsToml(buildData) {
+    def forgeVersionRange = "[${buildData."forge-version".substring(0, buildData."forge-version".indexOf('.'))},)"
+    def repoUrl = "https:///github.com/${buildData.repo}"
+    def fileText = """\
+# This file is auto-generated. Any changed made to this file will not be preserved.
+modLoader="javafml"
+loaderVersion="$forgeVersionRange"
+issueTrackerURL="$repoUrl/issues?q=is%3Aissue"
+[[mods]]
+modId="$archivesBaseName"
+version="${buildData."mod-version"}"
+displayName="${buildData."mod-name"}"
+updateJSONURL="$repoUrl/releases/download/latest.json"
+displayURL="${buildData.homepage}"
+logoFile="logo.png"
+authors="${String.join(", ", buildData.authors)}"
+description="${buildData.description}"
+[[dependencies.eot]]
+    modId="forge"
+    mandatory=true
+    versionRange="$forgeVersionRange"
+    ordering="NONE"
+    side="BOTH"
+"""
+    for ( d in buildData.dependencies ) {
+        fileText += """\
+[[dependencies.eot]]
+    modId="${d."mod-id"}"
+    mandatory=${d.mandatory}
+    versionRange="${d."version-range"}"
+    ordering="${d.ordering}"
+    side="${d.side}"
+"""
+    }
+    file("$projectDir/src/main/resources/META-INF/mods.toml").text = fileText
+}
+
+def getPromos(buildData) {
+	def promos = new HashMap()
+	def repo = new GitHubBuilder().withOAuthToken(System.getenv("GH_TOKEN")).build().getRepository(buildData.repo)
+	for ( r in repo.listReleases() ) {
+		def versions = getReleaseVersion(r.getTagName())
+		def mcversion = versions[0]
+		def modversion = versions[1]
+		def pre = r.isPrerelease()
+		def key = "$mcversion-${pre ? 'latest' : 'recommended'}"
+		promos.putIfAbsent(key, modversion)
+		if ( !pre ) {
+			key = "$mcversion-latest"
+			promos.putIfAbsent(key, modversion)
+		}
+	}
+	
+	return promos
+}
+
+def getReleaseVersion(v) {
+	if( v ) {
+		def versionRegex = /^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)/
+		def match = v =~ versionRegex
+		if ( match )
+			return [ match.group(1), match.group(2) ]
+	}
+	return [ "0.0.0", "0.0.0" ]
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+// def reobfFile = file("$buildDir/reobfJar/output.jar")
+// def reobfArtifact = artifacts.add('default', reobfFile) {
+//     type 'jar'
+//     builtBy 'reobfJar'
+// }
+// publishing {
+//     publications {
+//         mavenJava(MavenPublication) {
+//             artifact reobfArtifact
+//         }
+//     }
+//     repositories {
+//         maven {
+//             url "file:///${project.projectDir}/mcmodsrepo"
+//         }
+//     }
+// }
