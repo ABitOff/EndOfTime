@@ -5,12 +5,14 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.minecraft.world.WorldType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -21,6 +23,7 @@ public class EndOfTime
 {
 	private static final Logger LOGGER = LogManager.getLogger(EndOfTime.class);
 	private static final Map<String, Object> buildData = getBuildData();
+	private static final WorldType worldType = WorldTypeEOT.get();
 
 	public EndOfTime()
 	{
