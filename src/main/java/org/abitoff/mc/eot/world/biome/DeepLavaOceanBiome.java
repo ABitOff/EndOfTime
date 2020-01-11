@@ -1,5 +1,7 @@
 package org.abitoff.mc.eot.world.biome;
 
+import org.abitoff.mc.eot.Constants;
+
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
@@ -12,7 +14,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 public class DeepLavaOceanBiome extends Biome
 {
 	public static final DeepLavaOceanBiome INSTANCE =
-			(DeepLavaOceanBiome) new DeepLavaOceanBiome().setRegistryName("eot", "deep_lava_ocean");
+			(DeepLavaOceanBiome) new DeepLavaOceanBiome().setRegistryName(Constants.DEEP_LAVA_OCEAN_BIOME_RL);
 
 	private DeepLavaOceanBiome()
 	{

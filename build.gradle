@@ -18,9 +18,15 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'groovy'
 
-println buildDir
+sourceSets {
+    template {
+        java {
+            srcDirs = ['src/template/java']
+        }
+    }
+}
 
-def buildData = readJson("$projectDir/src/main/resources/build-data.json")
+def buildData = readJson("$projectDir/build-data.json")
 def mcversion = buildData."mc-version"
 def modversion = buildData."mod-version"
 def modname = buildData."mod-name"
@@ -93,13 +99,29 @@ minecraft {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${buildData."mc-version"}-${buildData."forge-version"}"
-    implementation 'com.google.code.gson:gson:2.8.+'
     testImplementation 'junit:junit:4.12'
 }
 
-build {
-	dependsOn "writeUpdateJson"
+build.dependsOn "generateConstants"
+build.dependsOn "writeUpdateJson"
+compileJava.dependsOn "compileTemplateJava"
+// compileTemplateJava.dependsOn "processTemplates"
+
+task processTemplates(type: Sync) {
+    from sourceSets.template.java
+    filter { String line -> filterConstants(line, buildData) }
+    into "$buildDir/src"
 }
+
+compileJava {
+    source processTemplates.outputs
+}
+
+// task generateConstants(type: Copy) {
+//     from 'src/template/java'
+//     into "src/main/java"
+//     filter { String line -> filterConstants(line, buildData) }
+// }
 
 task writeUpdateJson {
 	doLast {
@@ -130,6 +152,20 @@ jar {
 
 def readJson(f) {
     return new JsonSlurper().parseText(file(f).text);
+}
+
+def filterConstants(line, buildData) {
+    def map = [
+        *: buildData,
+        *: buildData."resource-locations"
+    ]
+    def out = line
+    for ( key in map.keySet() ) {
+        def val = map[key]
+        if(val instanceof String || val instanceof Number || val instanceof Boolean || val == null)
+            out = out.replaceAll("%$key", String.valueOf(map[key])) // String.valueOf in case of null
+    }
+    return out
 }
 
 def writeModsToml(buildData) {

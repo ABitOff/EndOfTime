@@ -1,6 +1,8 @@
 package org.abitoff.mc.eot.event;
 
 import java.util.function.BiFunction;
+
+import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +27,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
  * 
  * @author Steven Fontaine
  */
-@EventBusSubscriber(modid = "eot", bus = Bus.FORGE)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = Bus.FORGE)
 public class OverworldDimensionModHandler
 {
 	private static final Logger LOGGER = LogManager.getLogger(OverworldDimensionModHandler.class);

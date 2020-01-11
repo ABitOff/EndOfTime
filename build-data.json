@@ -15,5 +15,11 @@
     "credits": "",
     "authors": ["Steven Fontaine"],
     "description": "TODO",
-    "mod-dependencies": []
+    "mod-dependencies": [],
+    "resource-locations": {
+        "biome-provider": "biome-provider-eot",
+        "lava-ocean-biome": "lava-ocean",
+        "deep-lava-ocean-biome": "deep-lava-ocean",
+        "lava-river-biome": "lava-river"
+    }
 }

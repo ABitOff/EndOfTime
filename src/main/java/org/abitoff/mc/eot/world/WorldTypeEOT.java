@@ -4,7 +4,7 @@ import net.minecraft.world.WorldType;
 
 public class WorldTypeEOT extends WorldType
 {
-	private static final String NAME = "End of Time";
+	private static final String NAME = "end-of-time";
 	private static final WorldType INSTANCE = new WorldTypeEOT();
 
 	private WorldTypeEOT()

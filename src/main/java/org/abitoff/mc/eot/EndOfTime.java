@@ -1,21 +1,13 @@
 package org.abitoff.mc.eot;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.Map;
-
+import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.LavaRiverBiome;
-import org.abitoff.mc.eot.world.biome.ShallowLavaOceanBiome;
+import org.abitoff.mc.eot.world.biome.LavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,12 +21,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
-@Mod("eot")
+@Mod(Constants.MOD_ID)
 public class EndOfTime
 {
 	private static final Logger LOGGER = LogManager.getLogger(EndOfTime.class);
-	private static final Map<String, Object> BUILD_DATA = getBuildData();
-	public static final ResourceLocation EOT_BIOME_PROVIDER_RL = new ResourceLocation("eot:eot-biome-provider");
 	public static final ForgeRegistry<Biome> BIOME_REGISTRY = RegistryManager.ACTIVE
 			.getRegistry(RegistryManager.ACTIVE.getName(RegistryManager.ACTIVE.getRegistry(Biome.class)));
 
@@ -46,25 +36,14 @@ public class EndOfTime
 
 	private void setup(final FMLCommonSetupEvent event)
 	{
-		LOGGER.info("Loading {} version {}", BUILD_DATA.get("mod-name"), BUILD_DATA.get("mod-version"));
-	}
-
-	private static Map<String, Object> getBuildData()
-	{
-		Type mapType = new TypeToken<Map<String, Object>>()
+		LOGGER.info("Loading {} version {}", Constants.MOD_NAME, Constants.MOD_VERSION);
+		while (true)
 		{
-		}.getType();
-		try (Reader r = new InputStreamReader(EndOfTime.class.getResourceAsStream("/build-data.json")))
-		{
-			return new Gson().fromJson(r, mapType);
-		} catch (Exception e)
-		{
-			LOGGER.error("Failed to get End of Time build data!", e);
-			throw new RuntimeException(e);
+			LOGGER.info(Constants.MOD_NAME);
 		}
 	}
 
-	@EventBusSubscriber(modid = "eot", bus = Bus.MOD)
+	@EventBusSubscriber(modid = Constants.MOD_ID, bus = Bus.MOD)
 	public static class ModDimensionRegistrar
 	{
 		@SubscribeEvent
@@ -77,7 +56,7 @@ public class EndOfTime
 		public static void onBiomeRegistryEvent(RegistryEvent.Register<Biome> event)
 		{
 			event.getRegistry().register(DeepLavaOceanBiome.INSTANCE);
-			event.getRegistry().register(ShallowLavaOceanBiome.INSTANCE);
+			event.getRegistry().register(LavaOceanBiome.INSTANCE);
 			event.getRegistry().register(LavaRiverBiome.INSTANCE);
 		}
 	}

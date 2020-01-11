@@ -1,6 +1,6 @@
 package org.abitoff.mc.eot.world.biome.provider;
 
-import org.abitoff.mc.eot.EndOfTime;
+import org.abitoff.mc.eot.Constants;
 
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.biome.provider.OverworldBiomeProvider;
@@ -9,7 +9,7 @@ import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
 public class BiomeProviderTypeEOT extends BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider>
 {
 	private static final BiomeProviderTypeEOT INSTANCE =
-			(BiomeProviderTypeEOT) new BiomeProviderTypeEOT().setRegistryName(EndOfTime.EOT_BIOME_PROVIDER_RL);
+			(BiomeProviderTypeEOT) new BiomeProviderTypeEOT().setRegistryName(Constants.BIOME_PROVIDER_RL);
 
 	private BiomeProviderTypeEOT()
 	{

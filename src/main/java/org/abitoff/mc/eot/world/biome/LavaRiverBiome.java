@@ -1,5 +1,7 @@
 package org.abitoff.mc.eot.world.biome;
 
+import org.abitoff.mc.eot.Constants;
+
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
@@ -12,7 +14,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 public class LavaRiverBiome extends Biome
 {
 	public static final LavaRiverBiome INSTANCE =
-			(LavaRiverBiome) new LavaRiverBiome().setRegistryName("eot", "lava_river");
+			(LavaRiverBiome) new LavaRiverBiome().setRegistryName(Constants.LAVA_RIVER_BIOME_RL);
 
 	private LavaRiverBiome()
 	{

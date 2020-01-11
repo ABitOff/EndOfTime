@@ -6,10 +6,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.gen.INoiseRandom;
 import net.minecraft.world.gen.OverworldGenSettings;
-//import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraft.world.gen.layer.traits.IC0Transformer;
-//import net.minecraftforge.registries.ForgeRegistries;
-//import net.minecraftforge.registries.GameData;
 
 public class BiomeLayerEOT implements IC0Transformer
 {

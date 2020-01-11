@@ -1,5 +1,7 @@
 package org.abitoff.mc.eot.world.biome;
 
+import org.abitoff.mc.eot.Constants;
+
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
@@ -9,12 +11,12 @@ import net.minecraft.world.gen.feature.structure.MineshaftConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftStructure;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 
-public class ShallowLavaOceanBiome extends Biome
+public class LavaOceanBiome extends Biome
 {
-	public static final ShallowLavaOceanBiome INSTANCE =
-			(ShallowLavaOceanBiome) new ShallowLavaOceanBiome().setRegistryName("eot", "shallow_lava_ocean");
+	public static final LavaOceanBiome INSTANCE =
+			(LavaOceanBiome) new LavaOceanBiome().setRegistryName(Constants.LAVA_OCEAN_BIOME_RL);
 
-	private ShallowLavaOceanBiome()
+	private LavaOceanBiome()
 	{
 		super((new Biome.Builder()).surfaceBuilder(SurfaceBuilder.DEFAULT, SurfaceBuilder.SAND_CONFIG)
 				.precipitation(Biome.RainType.NONE).category(Biome.Category.OCEAN).depth(-1.0F).scale(0.1F)
