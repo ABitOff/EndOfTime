@@ -2,6 +2,7 @@ package org.abitoff.mc.eot.world.dimension;
 
 import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -29,6 +30,7 @@ public class DimensionEOT extends OverworldDimension
 		BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider> biomeProviderVanilla =
 				BiomeProviderTypeEOT.get();
 		OverworldGenSettings settings = chunkGenSurface.createSettings();
+		settings.setDefaultFluid(Blocks.LAVA.getDefaultState());
 		OverworldBiomeProviderSettings overworldbiomeprovidersettings = biomeProviderVanilla.createSettings()
 				.setWorldInfo(this.world.getWorldInfo()).setGeneratorSettings(settings);
 		return chunkGenSurface.create(this.world, biomeProviderVanilla.create(overworldbiomeprovidersettings),
