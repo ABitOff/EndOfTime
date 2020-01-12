@@ -22,20 +22,14 @@ public class LavaOceanBiome extends Biome
 				.precipitation(Biome.RainType.NONE).category(Biome.Category.OCEAN).depth(-1.0F).scale(0.1F)
 				.temperature(2.0F).downfall(0.0F).waterColor(4159204).waterFogColor(329011).parent(null));
 		this.addStructure(Feature.MINESHAFT, new MineshaftConfig(0.004D, MineshaftStructure.Type.NORMAL));
-		DefaultBiomeFeatures.addOceanCarvers(this);
+		DefaultBiomeFeatures.addCarvers(this);
 		DefaultBiomeFeatures.addStructures(this);
-		DefaultBiomeFeatures.addLakes(this);
 		DefaultBiomeFeatures.addMonsterRooms(this);
 		DefaultBiomeFeatures.addStoneVariants(this);
 		DefaultBiomeFeatures.addOres(this);
 		DefaultBiomeFeatures.addSedimentDisks(this);
-		DefaultBiomeFeatures.func_222296_u(this);
-		DefaultBiomeFeatures.addDefaultFlowers(this);
-		DefaultBiomeFeatures.func_222348_W(this);
 		DefaultBiomeFeatures.addMushrooms(this);
 		DefaultBiomeFeatures.addReedsAndPumpkins(this);
-		DefaultBiomeFeatures.addSprings(this);
-		DefaultBiomeFeatures.func_222309_aj(this);
 		DefaultBiomeFeatures.addFreezeTopLayer(this);
 		this.addSpawn(EntityClassification.AMBIENT, new Biome.SpawnListEntry(EntityType.BAT, 10, 8, 8));
 		this.addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.SPIDER, 100, 4, 4));

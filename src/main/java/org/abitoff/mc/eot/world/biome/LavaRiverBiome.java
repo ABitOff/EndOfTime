@@ -24,17 +24,12 @@ public class LavaRiverBiome extends Biome
 		this.addStructure(Feature.MINESHAFT, new MineshaftConfig(0.004D, MineshaftStructure.Type.NORMAL));
 		DefaultBiomeFeatures.addCarvers(this);
 		DefaultBiomeFeatures.addStructures(this);
-		DefaultBiomeFeatures.addLakes(this);
 		DefaultBiomeFeatures.addMonsterRooms(this);
 		DefaultBiomeFeatures.addStoneVariants(this);
 		DefaultBiomeFeatures.addOres(this);
 		DefaultBiomeFeatures.addSedimentDisks(this);
-		DefaultBiomeFeatures.func_222296_u(this);
-		DefaultBiomeFeatures.addDefaultFlowers(this);
-		DefaultBiomeFeatures.func_222348_W(this);
 		DefaultBiomeFeatures.addMushrooms(this);
 		DefaultBiomeFeatures.addReedsAndPumpkins(this);
-		DefaultBiomeFeatures.addSprings(this);
 		DefaultBiomeFeatures.addFreezeTopLayer(this);
 		this.addSpawn(EntityClassification.AMBIENT, new Biome.SpawnListEntry(EntityType.BAT, 10, 8, 8));
 		this.addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.SPIDER, 100, 4, 4));

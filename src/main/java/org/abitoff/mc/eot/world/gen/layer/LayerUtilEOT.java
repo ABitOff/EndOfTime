@@ -9,7 +9,10 @@ import net.minecraft.world.gen.IExtendedNoiseRandom;
 import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.area.IArea;
 import net.minecraft.world.gen.area.IAreaFactory;
+import net.minecraft.world.gen.layer.AddBambooForestLayer;
+import net.minecraft.world.gen.layer.AddIslandLayer;
 import net.minecraft.world.gen.layer.AddSnowLayer;
+import net.minecraft.world.gen.layer.BiomeLayer;
 import net.minecraft.world.gen.layer.DeepOceanLayer;
 import net.minecraft.world.gen.layer.EdgeBiomeLayer;
 import net.minecraft.world.gen.layer.EdgeLayer;
@@ -34,22 +37,22 @@ public class LayerUtilEOT extends LayerUtil
 	{
 		IAreaFactory<T> factory1 = IslandLayer.INSTANCE.apply(ctxFactory.apply(1));
 		factory1 = ZoomLayer.FUZZY.apply(ctxFactory.apply(2000), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(1), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(1), factory1);
 		factory1 = ZoomLayer.NORMAL.apply(ctxFactory.apply(2001), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(2), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(50), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(70), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(2), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(50), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(70), factory1);
 		factory1 = RemoveTooMuchOceanLayer.INSTANCE.apply(ctxFactory.apply(2), factory1);
 		IAreaFactory<T> factory2 = OceanLayer.INSTANCE.apply(ctxFactory.apply(2));
 		factory2 = LayerUtil.repeat(2001, ZoomLayer.NORMAL, factory2, 6, ctxFactory);
 		factory1 = AddSnowLayer.INSTANCE.apply(ctxFactory.apply(2), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(3), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(3), factory1);
 		factory1 = EdgeLayer.CoolWarm.INSTANCE.apply(ctxFactory.apply(2), factory1);
 		factory1 = EdgeLayer.HeatIce.INSTANCE.apply(ctxFactory.apply(2), factory1);
 		factory1 = EdgeLayer.Special.INSTANCE.apply(ctxFactory.apply(3), factory1);
 		factory1 = ZoomLayer.NORMAL.apply(ctxFactory.apply(2002), factory1);
 		factory1 = ZoomLayer.NORMAL.apply(ctxFactory.apply(2003), factory1);
-		factory1 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(4), factory1);
+		factory1 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(4), factory1);
 		factory1 = DeepOceanLayer.INSTANCE.apply(ctxFactory.apply(4), factory1);
 		factory1 = LayerUtil.repeat(1000L, ZoomLayer.NORMAL, factory1, 0, ctxFactory);
 		int biomeSize = 4;
@@ -75,7 +78,7 @@ public class LayerUtilEOT extends LayerUtil
 			factory4 = ZoomLayer.NORMAL.apply(ctxFactory.apply(1000 + k), factory4);
 			if (k == 0)
 			{
-				factory4 = AddIslandLayerEOT.INSTANCE.apply(ctxFactory.apply(3), factory4);
+				factory4 = AddIslandLayer.INSTANCE.apply(ctxFactory.apply(3), factory4);
 			}
 
 			if (k == 1 || biomeSize == 1)
@@ -87,8 +90,7 @@ public class LayerUtilEOT extends LayerUtil
 		factory4 = SmoothLayer.INSTANCE.apply(ctxFactory.apply(1000), factory4);
 		factory4 = MixRiverLayer.INSTANCE.apply(ctxFactory.apply(100), factory4, factory3);
 		factory4 = MixOceansLayer.INSTANCE.apply(ctxFactory.apply(100), factory4, factory2);
-		factory4 = OceanTransformerLayer.INSTANCE.apply(ctxFactory.apply(200), factory4);
-		factory4 = RiverTransformerLayer.INSTANCE.apply(ctxFactory.apply(200), factory4);
+		factory4 = EOTBiomeMapLayer.INSTANCE.apply(ctxFactory.apply(200), factory4);
 		IAreaFactory<T> factory6 = VoroniZoomLayer.INSTANCE.apply(ctxFactory.apply(10), factory4);
 		return ImmutableList.of(factory4, factory6, factory4);
 	}
@@ -96,7 +98,8 @@ public class LayerUtilEOT extends LayerUtil
 	public static <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(WorldType type,
 			IAreaFactory<T> parentLayer, OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)
 	{
-		parentLayer = (new BiomeLayerEOT(type, chunkSettings)).apply(contextFactory.apply(200), parentLayer);
+		parentLayer = (new BiomeLayer(type, chunkSettings)).apply(contextFactory.apply(200), parentLayer);
+		parentLayer = AddBambooForestLayer.INSTANCE.apply(contextFactory.apply(1001), parentLayer);
 		parentLayer = LayerUtil.repeat(1000, ZoomLayer.NORMAL, parentLayer, 2, contextFactory);
 		parentLayer = EdgeBiomeLayer.INSTANCE.apply(contextFactory.apply(1000), parentLayer);
 		return parentLayer;

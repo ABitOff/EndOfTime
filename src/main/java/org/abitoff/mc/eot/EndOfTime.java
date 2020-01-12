@@ -2,6 +2,7 @@ package org.abitoff.mc.eot;
 
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
+import org.abitoff.mc.eot.world.biome.EOTDesertBiome;
 import org.abitoff.mc.eot.world.biome.LavaRiverBiome;
 import org.abitoff.mc.eot.world.biome.LavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
+import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,10 +39,6 @@ public class EndOfTime
 	private void setup(final FMLCommonSetupEvent event)
 	{
 		LOGGER.info("Loading {} version {}", Constants.MOD_NAME, Constants.MOD_VERSION);
-		while (true)
-		{
-			LOGGER.info(Constants.MOD_NAME);
-		}
 	}
 
 	@EventBusSubscriber(modid = Constants.MOD_ID, bus = Bus.MOD)
@@ -58,6 +56,8 @@ public class EndOfTime
 			event.getRegistry().register(DeepLavaOceanBiome.INSTANCE);
 			event.getRegistry().register(LavaOceanBiome.INSTANCE);
 			event.getRegistry().register(LavaRiverBiome.INSTANCE);
+			event.getRegistry().register(EOTDesertBiome.INSTANCE);
+			BiomeManager.addSpawnBiome(EOTDesertBiome.INSTANCE);
 		}
 	}
 }

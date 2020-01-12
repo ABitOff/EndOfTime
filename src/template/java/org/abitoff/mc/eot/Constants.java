@@ -9,4 +9,5 @@ public class Constants
 	public static final String LAVA_OCEAN_BIOME_RL = "%mod-id:%lava-ocean-biome";
 	public static final String DEEP_LAVA_OCEAN_BIOME_RL = "%mod-id:%deep-lava-ocean-biome";
 	public static final String LAVA_RIVER_BIOME_RL = "%mod-id:%lava-river-biome";
+	public static final String EOT_DESERT_BIOME_RL = "%mod-id:%eot-desert-biome";
 }

@@ -46,7 +46,7 @@ public class DimensionEOT extends OverworldDimension
 	@Override
 	public float calculateCelestialAngle(long worldTime, float partialTicks)
 	{
-		return 0.7853982f;
+		return 0f;
 	}
 
 	@Override

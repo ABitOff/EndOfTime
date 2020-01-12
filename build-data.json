@@ -20,6 +20,7 @@
         "biome-provider": "biome-provider-eot",
         "lava-ocean-biome": "lava-ocean",
         "deep-lava-ocean-biome": "deep-lava-ocean",
-        "lava-river-biome": "lava-river"
+        "lava-river-biome": "lava-river",
+        "eot-desert-biome": "eot-desert"
     }
 }
