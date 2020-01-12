@@ -11,6 +11,9 @@ hs_err_pid*
 build
 .gradle
 
+# vscode
+.vscode
+
 # other
 eclipse
 run
