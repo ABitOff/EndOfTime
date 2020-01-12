@@ -18,13 +18,13 @@ public class EOTDesertBiome extends Biome
 {
 	public static final EOTDesertBiome INSTANCE =
 			(EOTDesertBiome) new EOTDesertBiome().setRegistryName(Constants.EOT_DESERT_BIOME_RL);
-	
+
 	private EOTDesertBiome()
 	{
 		super((new Biome.Builder()).surfaceBuilder(SurfaceBuilder.DEFAULT, SurfaceBuilder.SAND_SAND_GRAVEL_CONFIG)
 				.precipitation(Biome.RainType.NONE).category(Biome.Category.DESERT).depth(0.125F).scale(0.05F)
 				.temperature(2.0F).downfall(0.0F).waterColor(4159204).waterFogColor(329011).parent((String) null));
-		this.addStructure(Feature.VILLAGE, new VillageConfig("village/desert/town_centers", 6));
+		this.addStructure(Feature.VILLAGE, new VillageConfig(Constants.MOD_ID + ":village/eot/town_centers", 6));
 		this.addStructure(Feature.PILLAGER_OUTPOST, new PillagerOutpostConfig(0.004D));
 		this.addStructure(Feature.DESERT_PYRAMID, IFeatureConfig.NO_FEATURE_CONFIG);
 		this.addStructure(Feature.MINESHAFT, new MineshaftConfig(0.004D, MineshaftStructure.Type.NORMAL));
@@ -40,6 +40,7 @@ public class EOTDesertBiome extends Biome
 		DefaultBiomeFeatures.addMushrooms(this);
 		DefaultBiomeFeatures.addExtraReedsPumpkinsCactus(this);
 		DefaultBiomeFeatures.addDesertFeatures(this);
+		DefaultBiomeFeatures.addSprings(this);
 		DefaultBiomeFeatures.addFreezeTopLayer(this);
 		this.addSpawn(EntityClassification.AMBIENT, new Biome.SpawnListEntry(EntityType.BAT, 10, 8, 8));
 		this.addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.SPIDER, 100, 4, 4));
