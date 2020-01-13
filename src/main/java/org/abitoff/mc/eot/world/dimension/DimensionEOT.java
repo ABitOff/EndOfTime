@@ -41,7 +41,11 @@ public class DimensionEOT extends OverworldDimension
 
 	public float calculateCelestialAngle(long worldTime, float partialTicks)
 	{
-		return 0f;
+		long dayLength = 24000;
+		double x = (double) (worldTime % dayLength) / (double) dayLength + 0.358173429016586d;
+		double cos = Math.cos(Math.PI * x);
+		double floor = Math.floor(x);
+		return (float) (Math.abs(floor + cos * (floor % 2.0d - 0.5d)) % 1.0d);
 	}
 
 	@Override
