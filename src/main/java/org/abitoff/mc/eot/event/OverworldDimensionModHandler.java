@@ -8,6 +8,7 @@ import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -113,7 +114,8 @@ public class OverworldDimensionModHandler
 
 					if (spawn != null)
 					{
-						event.getWorld().getWorldInfo().setSpawn(spawn);
+						world.getWorldInfo().setSpawn(spawn);
+						world.setBlockState(spawn, Blocks.CRAFTING_TABLE.getDefaultState(), 3);
 						event.setCanceled(true);
 						return;
 					}
