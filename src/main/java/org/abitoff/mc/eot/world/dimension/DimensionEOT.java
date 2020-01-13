@@ -37,34 +37,15 @@ public class DimensionEOT extends OverworldDimension
 				settings);
 	}
 
-	@Override
-	public BlockPos findSpawn(int posX, int posZ, boolean checkValid)
-	{
-		return super.findSpawn(posX, posZ, false);
-	}
-
-	@Override
 	public float calculateCelestialAngle(long worldTime, float partialTicks)
 	{
 		return 0f;
 	}
 
 	@Override
-	public boolean isSurfaceWorld()
-	{
-		return true;
-	}
-
-	@Override
 	public Vec3d getFogColor(float celestialAngle, float partialTicks)
 	{
 		return new Vec3d(.25, .25, .25);
-	}
-
-	@Override
-	public boolean canRespawnHere()
-	{
-		return true;
 	}
 
 	@Override

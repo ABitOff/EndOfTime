@@ -11,10 +11,15 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -81,5 +86,42 @@ public class OverworldDimensionModHandler
 	public static void cleanup(FMLServerStoppedEvent event)
 	{
 		OVERWORLD.factory = factoryDefault;
+	}
+
+	@SubscribeEvent
+	public static void onCreateSpawnPosition(CreateSpawnPosition event)
+	{
+		IWorld world = event.getWorld();
+		assert world instanceof ServerWorld;
+		int radius = 1000;
+
+		BlockPos villagePos =
+				((ServerWorld) world).findNearestStructure("Village", new BlockPos(0, 0, 0), radius, false);
+		if (villagePos == null)
+			return;
+
+		ChunkPos origin = new ChunkPos(villagePos);
+		for (int currRadius = 0; currRadius < radius; currRadius++)
+		{
+			for (int x = -currRadius; x < currRadius + 1; x++)
+			{
+				boolean xEdge = x == -currRadius || x == currRadius;
+				for (int z = -currRadius; z < currRadius + 1; z++)
+				{
+					ChunkPos pos = new ChunkPos(origin.x + x, origin.z + z);
+					BlockPos spawn = world.getDimension().findSpawn(pos, false);
+
+					if (spawn != null)
+					{
+						event.getWorld().getWorldInfo().setSpawn(spawn);
+						event.setCanceled(true);
+						return;
+					}
+
+					if (!xEdge)
+						z += currRadius;
+				}
+			}
+		}
 	}
 }
