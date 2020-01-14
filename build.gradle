@@ -113,8 +113,6 @@ task writeUpdateJson {
 	}
 }
 
-build.dependsOn "writeUpdateJson"
-
 task processTemplates(type: Sync) {
     from sourceSets.template.java
     filter { String line -> filterConstants(line, buildData) }
@@ -150,7 +148,7 @@ displayURL="${buildData.homepage}"
 logoFile="logo.png"
 authors="${String.join(", ", buildData.authors)}"
 description="${buildData.description}"
-[[dependencies.eot]]
+[[dependencies.${buildData."mod-id"}]]
     modId="forge"
     mandatory=true
     versionRange="$forgeVersionRange"
@@ -159,7 +157,7 @@ description="${buildData.description}"
 """
     for ( d in buildData.dependencies ) {
         fileText += """\
-[[dependencies.eot]]
+[[dependencies.${buildData."mod-id"}]]
     modId="${d."mod-id"}"
     mandatory=${d.mandatory}
     versionRange="${d."version-range"}"
@@ -170,7 +168,7 @@ description="${buildData.description}"
     file("$projectDir/src/main/resources/META-INF/mods.toml").text = fileText
 }
 
-assemble.dependsOn "processAssets", "processData", "writeModsToml"
+build.dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
 
 compileJava {
     source processTemplates.outputs
