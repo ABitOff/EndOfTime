@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.items.MutatedCropItem;
+import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.EOTDesertBiome;
 import org.abitoff.mc.eot.world.biome.LavaRiverBiome;
@@ -14,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.mojang.datafixers.util.Pair;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
@@ -72,6 +76,19 @@ public class EndOfTime
 		public static void onBiomeProviderRegistryEvent(RegistryEvent.Register<BiomeProviderType<?, ?>> event)
 		{
 			event.getRegistry().register(BiomeProviderTypeEOT.get());
+		}
+
+		@SubscribeEvent
+		public void onBlockRegistryEvent(RegistryEvent.Register<Block> event)
+		{
+			event.getRegistry().register(MutatedCropBlock.get());
+		}
+
+		@SubscribeEvent
+		public static void onItemRegistryEvent(RegistryEvent.Register<Item> event)
+		{
+			event.getRegistry().register(MutativeCerateItem.get());
+			event.getRegistry().register(MutatedCropItem.get());
 		}
 
 		@SubscribeEvent

@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [{
+        "item": "minecraft:wheat_seeds"
+    }, {
+        "item": "%mod-id:%mutative-cerate"
+    }],
+    "result": {
+        "item": "%mod-id:%mutated-crop",
+        "count": 1
+    }
+}

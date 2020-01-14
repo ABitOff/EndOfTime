@@ -17,10 +17,12 @@
     "description": "TODO",
     "mod-dependencies": [],
     "resource-locations": {
-        "biome-provider": "biome-provider-eot",
-        "lava-ocean-biome": "lava-ocean",
-        "deep-lava-ocean-biome": "deep-lava-ocean",
-        "lava-river-biome": "lava-river",
-        "eot-desert-biome": "eot-desert"
+        "biome-provider": "biome_provider_eot",
+        "lava-ocean-biome": "lava_ocean",
+        "deep-lava-ocean-biome": "deep_lava_ocean",
+        "lava-river-biome": "lava_river",
+        "eot-desert-biome": "eot_desert",
+        "mutative-cerate": "mutative_cerate",
+        "mutated-crop": "mutated_crop"
     }
 }

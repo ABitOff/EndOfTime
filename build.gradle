@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import java.util.stream.Collectors
 import org.kohsuke.github.GitHubBuilder
 
 buildscript {
@@ -26,6 +27,7 @@ sourceSets {
     }
 }
 
+def nonfilterableFileTypes = [".png"]
 def buildData = readJson("$projectDir/build-data.json")
 def mcversion = buildData."mc-version"
 def modversion = buildData."mod-version"
@@ -120,14 +122,27 @@ task processTemplates(type: Sync) {
 }
 
 task processAssets(type: Sync) {
-    from "src/resources/assets"
-    filter { String line -> filterConstants(line, buildData) }
+    def nonfilterable = nonfilterableFileTypes.stream().map({"**/*$it"}).collect(Collectors.toList())
+    from("src/resources/assets/") {
+        exclude(*nonfilterable)
+        filter { String line -> filterConstants(line, buildData) }
+    }
+    from("src/resources/assets/") {
+        include(*nonfilterable)
+    }
+    rename { String name -> renameAssets(name, buildData) }
     into "src/main/resources/assets/${buildData."mod-id"}"
 }
 
 task processData(type: Sync) {
-    from "src/resources/data"
-    filter { String line -> filterConstants(line, buildData) }
+    def nonfilterable = nonfilterableFileTypes.stream().map({"**/*$it"}).collect(Collectors.toList())
+    from("src/resources/data/") {
+        exclude(*nonfilterable)
+        filter { String line -> filterConstants(line, buildData) }
+    }
+    from("src/resources/data/") {
+        include(*nonfilterable)
+    }
     into "src/main/resources/data/${buildData."mod-id"}"
 }
 
@@ -169,6 +184,7 @@ description="${buildData.description}"
 }
 
 build.dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
+assemble.dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
 
 compileJava {
     source processTemplates.outputs
@@ -205,6 +221,12 @@ def filterConstants(line, buildData) {
             out = out.replaceAll("%$key", String.valueOf(map[key])) // String.valueOf in case of null
     }
     return out
+}
+
+def renameAssets(f, buildData) {
+    if ( f.startsWith("%r") )
+        return filterConstants(f.substring(2), buildData);
+    return null;
 }
 
 def getPromos(buildData) {
