@@ -18,6 +18,10 @@ import net.minecraft.world.gen.OverworldGenSettings;
 
 public class DimensionEOT extends OverworldDimension
 {
+	// super.calculateCelestialAngle(0) == this.calculateCelestialAngle(TIME_OFFSET)
+	// 1.0d + Math.asin((Math.sqrt(2.0d) - 4.0d) / 6.0d) / Math.PI;
+	private static final double TIME_OFFSET = 0.8581734479693928d;
+
 	public DimensionEOT(World worldIn, DimensionType typeIn)
 	{
 		super(worldIn, typeIn);
@@ -41,17 +45,28 @@ public class DimensionEOT extends OverworldDimension
 
 	public float calculateCelestialAngle(long worldTime, float partialTicks)
 	{
-		long dayLength = 24000;
-		double x = (double) (worldTime % dayLength) / (double) dayLength + 0.358173429016586d;
-		double cos = Math.cos(Math.PI * x);
-		double floor = Math.floor(x);
-		return (float) (Math.abs(floor + cos * (floor % 2.0d - 0.5d)) % 1.0d);
+		// for future reference, super.calculateCelestialAngle(0, 0) == 1 / 12 * (8 + sqrt(2)) ~= 0.784517765045166
+		double dayLength = 24000;
+		double x = ((double) (worldTime % (long) dayLength) / dayLength + TIME_OFFSET) % 1.0;
+		return (float) (Math.sin(Math.PI * x) / 2.0d * sgn(0.5d - x) + Math.floor(x + 0.5d));
+	}
+
+	private static double sgn(double x)
+	{
+		return x < 0 ? -1 : 1;
 	}
 
 	@Override
 	public Vec3d getFogColor(float celestialAngle, float partialTicks)
 	{
-		return new Vec3d(.25, .25, .25);
+		double r = 0.25;
+		double gb = 0.25;
+		if (celestialAngle > 0.25 && celestialAngle < 0.75)
+		{
+			r = Math.max(2.5 * Math.abs((double) celestialAngle - 0.5) - 0.375, 0.125);
+			gb = Math.max(2.5 * Math.abs((double) celestialAngle - 0.5) - 0.375, 0.046875);
+		}
+		return new Vec3d(r, gb, gb);
 	}
 
 	@Override
