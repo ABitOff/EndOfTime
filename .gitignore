@@ -18,3 +18,5 @@ build
 eclipse
 run
 mods.toml
+src/main/resources/assets
+src/main/resources/data

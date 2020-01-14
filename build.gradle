@@ -33,7 +33,6 @@ def modname = buildData."mod-name"
 version = "$mcversion-$modversion"
 group = buildData.group
 archivesBaseName = buildData."mod-id"
-writeModsToml(buildData)
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -102,19 +101,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-build.dependsOn "writeUpdateJson"
-compileJava.dependsOn "compileTemplateJava"
-
-task processTemplates(type: Sync) {
-    from sourceSets.template.java
-    filter { String line -> filterConstants(line, buildData) }
-    into "$buildDir/src"
-}
-
-compileJava {
-    source processTemplates.outputs
-}
-
 task writeUpdateJson {
 	doLast {
 		def changelog = readJson("$projectDir/changelog.json")
@@ -127,40 +113,27 @@ task writeUpdateJson {
 	}
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    manifest {
-        attributes([
-            "Specification-Title": modname,
-            "Specification-Vendor": buildData."org-name",
-            "Specification-Version": modversion,
-            "Implementation-Title": modname,
-            "Implementation-Version": modversion,
-            "Implementation-Vendor" : buildData."org-name",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
+build.dependsOn "writeUpdateJson"
+
+task processTemplates(type: Sync) {
+    from sourceSets.template.java
+    filter { String line -> filterConstants(line, buildData) }
+    into "$buildDir/src"
 }
 
-def readJson(f) {
-    return new JsonSlurper().parseText(file(f).text);
+task processAssets(type: Sync) {
+    from "src/resources/assets"
+    filter { String line -> filterConstants(line, buildData) }
+    into "src/main/resources/assets/${buildData."mod-id"}"
 }
 
-def filterConstants(line, buildData) {
-    def map = [
-        *: buildData,
-        *: buildData."resource-locations"
-    ]
-    def out = line
-    for ( key in map.keySet() ) {
-        def val = map[key]
-        if(val instanceof String || val instanceof Number || val instanceof Boolean || val == null)
-            out = out.replaceAll("%$key", String.valueOf(map[key])) // String.valueOf in case of null
-    }
-    return out
+task processData(type: Sync) {
+    from "src/resources/data"
+    filter { String line -> filterConstants(line, buildData) }
+    into "src/main/resources/data/${buildData."mod-id"}"
 }
 
-def writeModsToml(buildData) {
+task writeModsToml {
     def forgeVersionRange = "[${buildData."forge-version".substring(0, buildData."forge-version".indexOf('.'))},)"
     def repoUrl = "https:///github.com/${buildData.repo}"
     def fileText = """\
@@ -195,6 +168,45 @@ description="${buildData.description}"
 """
     }
     file("$projectDir/src/main/resources/META-INF/mods.toml").text = fileText
+}
+
+assemble.dependsOn "processAssets", "processData", "writeModsToml"
+
+compileJava {
+    source processTemplates.outputs
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": modname,
+            "Specification-Vendor": buildData."org-name",
+            "Specification-Version": modversion,
+            "Implementation-Title": modname,
+            "Implementation-Version": modversion,
+            "Implementation-Vendor" : buildData."org-name",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+def readJson(f) {
+    return new JsonSlurper().parseText(file(f).text);
+}
+
+def filterConstants(line, buildData) {
+    def map = [
+        *: buildData,
+        *: buildData."resource-locations"
+    ]
+    def out = line
+    for ( key in map.keySet() ) {
+        def val = map[key]
+        if(val instanceof String || val instanceof Number || val instanceof Boolean || val == null)
+            out = out.replaceAll("%$key", String.valueOf(map[key])) // String.valueOf in case of null
+    }
+    return out
 }
 
 def getPromos(buildData) {
