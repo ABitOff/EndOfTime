@@ -79,7 +79,7 @@ public class EndOfTime
 		}
 
 		@SubscribeEvent
-		public void onBlockRegistryEvent(RegistryEvent.Register<Block> event)
+		public static void onBlockRegistryEvent(RegistryEvent.Register<Block> event)
 		{
 			event.getRegistry().register(MutatedCropBlock.get());
 		}
