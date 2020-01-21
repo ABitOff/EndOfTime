@@ -94,6 +94,10 @@ public class ForgeBusEventHandler
 	{
 		IWorld world = event.getWorld();
 		assert world instanceof ServerWorld;
+
+		if (((ServerWorld) world).getWorldType() != WorldTypeEOT.get())
+			return;
+
 		int radius = 1000;
 
 		BlockPos villagePos =
