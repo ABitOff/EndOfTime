@@ -1,5 +1,6 @@
-package org.abitoff.mc.eot;
+package org.abitoff.mc.eot.block;
 
+import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.items.MutatedCropItem;
 
 import net.minecraft.block.Blocks;

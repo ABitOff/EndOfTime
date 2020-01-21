@@ -1,6 +1,6 @@
 package org.abitoff.mc.eot.items;
 
-import org.abitoff.mc.eot.MutatedCropBlock;
+import org.abitoff.mc.eot.block.MutatedCropBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockNamedItem;

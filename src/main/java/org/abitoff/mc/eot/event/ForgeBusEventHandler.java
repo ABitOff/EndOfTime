@@ -34,9 +34,9 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
  * @author Steven Fontaine
  */
 @EventBusSubscriber(modid = Constants.MOD_ID, bus = Bus.FORGE)
-public class OverworldDimensionModHandler
+public class ForgeBusEventHandler
 {
-	private static final Logger LOGGER = LogManager.getLogger(OverworldDimensionModHandler.class);
+	private static final Logger LOGGER = LogManager.getLogger(ForgeBusEventHandler.class);
 	private static final WorldType WORLD_TYPE_EOT = WorldTypeEOT.get();
 	private static final DimensionType OVERWORLD = DimensionType.OVERWORLD;
 
