@@ -1,5 +1,5 @@
 {
-    "type": "minecraft:crafting_shaped",
+    "type": "%mod-id:%shaped-recipe-serializer",
     "group": "planks",
     "pattern": [
         "###",

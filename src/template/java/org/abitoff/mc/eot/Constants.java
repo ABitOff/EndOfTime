@@ -12,4 +12,6 @@ public class Constants
 	public static final String EOT_DESERT_BIOME_RL = "%mod-id:%eot-desert-biome";
 	public static final String MUTATIVE_CERATE_RL = "%mod-id:%mutative-cerate";
 	public static final String MUTATED_CROP_RL = "%mod-id:%mutated-crop";
+	public static final String SHAPELESS_RECIPE_SERIALIZER_RL = "%mod-id:%shapeless-recipe-serializer";
+	public static final String SHAPED_RECIPE_SERIALIZER_RL = "%mod-id:%shaped-recipe-serializer";
 }

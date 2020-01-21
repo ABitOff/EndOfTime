@@ -1,5 +1,5 @@
 {
-    "type": "minecraft:crafting_shapeless",
+    "type": "%mod-id:%shapeless-recipe-serializer",
     "ingredients": [{
         "item": "minecraft:wheat_seeds"
     }, {

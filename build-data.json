@@ -23,6 +23,8 @@
         "lava-river-biome": "lava_river",
         "eot-desert-biome": "eot_desert",
         "mutative-cerate": "mutative_cerate",
-        "mutated-crop": "mutated_crop"
+        "mutated-crop": "mutated_crop",
+        "shapeless-recipe-serializer": "crafting_special_eot_shapeless",
+        "shaped-recipe-serializer": "crafting_special_eot_shaped"
     }
 }

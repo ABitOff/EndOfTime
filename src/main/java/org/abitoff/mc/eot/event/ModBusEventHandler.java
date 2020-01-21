@@ -4,6 +4,8 @@ import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.block.MutatedCropBlock;
 import org.abitoff.mc.eot.items.MutatedCropItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
+import org.abitoff.mc.eot.recipe.EOTShapedRecipe;
+import org.abitoff.mc.eot.recipe.EOTShapelessRecipe;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.EOTDesertBiome;
 import org.abitoff.mc.eot.world.biome.LavaOceanBiome;
@@ -12,6 +14,7 @@ import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraftforge.common.BiomeManager;
@@ -50,5 +53,12 @@ public class ModBusEventHandler
 		event.getRegistry().register(LavaRiverBiome.INSTANCE);
 		event.getRegistry().register(EOTDesertBiome.INSTANCE);
 		BiomeManager.addSpawnBiome(EOTDesertBiome.INSTANCE);
+	}
+
+	@SubscribeEvent
+	public static void onRecipeSerializerRegistryEvent(RegistryEvent.Register<IRecipeSerializer<?>> event)
+	{
+		event.getRegistry().register(EOTShapelessRecipe.SERIALIZER);
+		event.getRegistry().register(EOTShapedRecipe.SERIALIZER);
 	}
 }
