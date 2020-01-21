@@ -27,8 +27,8 @@ import net.minecraftforge.registries.RegistryManager;
 public class EndOfTime
 {
 	private static final Logger LOGGER = LogManager.getLogger(EndOfTime.class);
-	public static final ForgeRegistry<Biome> BIOME_REGISTRY = RegistryManager.ACTIVE
-			.getRegistry(RegistryManager.ACTIVE.getName(RegistryManager.ACTIVE.getRegistry(Biome.class)));
+	public static final ForgeRegistry<Biome> BIOME_REGISTRY =
+			(ForgeRegistry<Biome>) RegistryManager.ACTIVE.getRegistry(Biome.class);
 
 	public EndOfTime()
 	{
