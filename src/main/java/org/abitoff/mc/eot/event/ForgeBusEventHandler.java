@@ -1,7 +1,6 @@
 package org.abitoff.mc.eot.event;
 
 import java.util.function.BiFunction;
-
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
@@ -10,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
@@ -55,23 +52,11 @@ public class ForgeBusEventHandler
 	 * inject our Dimension factory into DimensionType.OVERWORLD.
 	 */
 	@SubscribeEvent
-	public static void inject(FMLServerAboutToStartEvent event)
+	public static void onServerAboutToStart(FMLServerAboutToStartEvent event)
 	{
 		// get this server's WorldType
-		WorldType t;
 		MinecraftServer server = event.getServer();
-		if (server instanceof IntegratedServer)
-		{
-			t = ((IntegratedServer) server).worldSettings.getTerrainType();
-		} else if (server instanceof DedicatedServer)
-		{
-			t = ((DedicatedServer) server).settings.getProperties().worldType;
-		} else
-		{
-			// this should never happen unless another mod has added a custom server type.
-			LOGGER.warn("Unrecognized server type: {}. Assuming mod is not enabled!", server.getClass().getName());
-			t = null;
-		}
+		WorldType t = server.getActiveAnvilConverter().getWorldInfo(server.getFolderName()).getGenerator();
 
 		// if the server is loading a WorldTypeEOT, inject our factory
 		if (t == WORLD_TYPE_EOT)
@@ -84,7 +69,7 @@ public class ForgeBusEventHandler
 	 * Cleanup after a server has stopped, undoing our injection.
 	 */
 	@SubscribeEvent
-	public static void cleanup(FMLServerStoppedEvent event)
+	public static void onServerStopped(FMLServerStoppedEvent event)
 	{
 		OVERWORLD.factory = factoryDefault;
 	}
