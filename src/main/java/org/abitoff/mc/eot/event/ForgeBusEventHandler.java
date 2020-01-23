@@ -8,6 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.goal.FleeSunGoal;
+import net.minecraft.entity.ai.goal.RestrictSunGoal;
+import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -17,6 +21,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -114,5 +119,16 @@ public class ForgeBusEventHandler
 				}
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event)
+	{
+		Entity entity = event.getEntity();
+		if (!(entity instanceof ZombieEntity))
+			return;
+		ZombieEntity zombie = (ZombieEntity) entity;
+		zombie.goalSelector.addGoal(4, new RestrictSunGoal(zombie));
+		zombie.goalSelector.addGoal(4, new FleeSunGoal(zombie, 1.0D));
 	}
 }
