@@ -92,37 +92,54 @@ public class ForgeBusEventHandler
 		OVERWORLD.factory = factoryDefault;
 	}
 
+	/**
+	 * World generation has finished, and a spawn point is being created. We want to place the player next to a village
+	 * and give them a crafting table, so we handle that here.
+	 */
 	@SubscribeEvent
 	public static void onCreateSpawnPosition(CreateSpawnPosition event)
 	{
 		IWorld world = event.getWorld();
 		assert world instanceof ServerWorld;
+		@SuppressWarnings("resource") // closing sw isn't our job.. seems like a java compiler bug.
+		ServerWorld sw = (ServerWorld) world;
 
-		if (((ServerWorld) world).getWorldType() != WorldTypeEOT.get())
+		if (sw.getWorldType() != WORLD_TYPE_EOT || sw.getDimension().getType() != OVERWORLD)
 			return;
 
+		LOGGER.info("Creating spawn position for {} world type.", sw.getWorldType().getName());
+
+		// look for a village within 1000 chunks of (0,0,0). It's incredibly rare that this will ever fail.
+		LOGGER.info("Searching for a village to spawn next to.");
 		int radius = 1000;
-
-		BlockPos villagePos =
-				((ServerWorld) world).findNearestStructure("Village", new BlockPos(0, 0, 0), radius, false);
+		BlockPos villagePos = sw.findNearestStructure("Village", new BlockPos(0, 0, 0), radius, false);
 		if (villagePos == null)
+		{
+			LOGGER.warn("No village found! Resorting to default spawn point creation algorithm.");
 			return;
+		}
+		LOGGER.info("Village found at {}.", villagePos);
 
+		// look for a chunk which can be set as the spawn chunk. we search in concentric squares centered around the
+		// chunk which villagePos is located in. we only search the edges of the square, because the center chunks of
+		// the square were searched by earlier iterations.
+		LOGGER.info("Searching for appropriate spawn chunk near village.");
 		ChunkPos origin = new ChunkPos(villagePos);
 		for (int currRadius = 0; currRadius < radius; currRadius++)
 		{
+			LOGGER.info("Search radius: {}", currRadius);
 			for (int x = -currRadius; x < currRadius + 1; x++)
 			{
 				boolean xEdge = x == -currRadius || x == currRadius;
 				for (int z = -currRadius; z < currRadius + 1; z++)
 				{
 					ChunkPos pos = new ChunkPos(origin.x + x, origin.z + z);
-					BlockPos spawn = world.getDimension().findSpawn(pos, false);
+					BlockPos spawn = sw.getDimension().findSpawn(pos, false);
 
 					if (spawn != null)
 					{
-						world.getWorldInfo().setSpawn(spawn);
-						world.setBlockState(spawn, Blocks.CRAFTING_TABLE.getDefaultState(), 3);
+						LOGGER.info("Spawn chunk found: {}", spawn);
+						sw.getWorldInfo().setSpawn(spawn);
 						event.setCanceled(true);
 						return;
 					}
@@ -132,6 +149,7 @@ public class ForgeBusEventHandler
 				}
 			}
 		}
+		LOGGER.warn("Spawn chunk not found! Resorting to default spawn point creation algorithm.");
 	}
 
 	@SubscribeEvent
