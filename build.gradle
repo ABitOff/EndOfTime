@@ -116,6 +116,8 @@ task writeUpdateJson {
 }
 
 task processTemplates(type: Sync) {
+    dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
+    outputs.upToDateWhen { false }
     from sourceSets.template.java
     filter { String line -> filterConstants(line, buildData) }
     into "$buildDir/src"
@@ -147,44 +149,43 @@ task processData(type: Sync) {
 }
 
 task writeModsToml {
-    def forgeVersionRange = "[${buildData."forge-version".substring(0, buildData."forge-version".indexOf('.'))},)"
-    def repoUrl = "https:///github.com/${buildData.repo}"
-    def fileText = """\
-# This file is auto-generated. Any changed made to this file will not be preserved.
-modLoader="javafml"
-loaderVersion="$forgeVersionRange"
-issueTrackerURL="$repoUrl/issues?q=is%3Aissue"
-[[mods]]
-modId="$archivesBaseName"
-version="${buildData."mod-version"}"
-displayName="${buildData."mod-name"}"
-updateJSONURL="$repoUrl/releases/download/latest.json"
-displayURL="${buildData.homepage}"
-logoFile="logo.png"
-authors="${String.join(", ", buildData.authors)}"
-description="${buildData.description}"
-[[dependencies.${buildData."mod-id"}]]
-    modId="forge"
-    mandatory=true
-    versionRange="$forgeVersionRange"
-    ordering="NONE"
-    side="BOTH"
-"""
-    for ( d in buildData.dependencies ) {
-        fileText += """\
-[[dependencies.${buildData."mod-id"}]]
-    modId="${d."mod-id"}"
-    mandatory=${d.mandatory}
-    versionRange="${d."version-range"}"
-    ordering="${d.ordering}"
-    side="${d.side}"
-"""
+    doFirst {
+        def forgeVersionRange = "[${buildData."forge-version".substring(0, buildData."forge-version".indexOf('.'))},)"
+        def repoUrl = "https:///github.com/${buildData.repo}"
+        def fileText = """\
+            # This file is auto-generated. Any changed made to this file will not be preserved.
+            modLoader="javafml"
+            loaderVersion="$forgeVersionRange"
+            issueTrackerURL="$repoUrl/issues?q=is%3Aissue"
+            [[mods]]
+            modId="$archivesBaseName"
+            version="${buildData."mod-version"}"
+            displayName="${buildData."mod-name"}"
+            updateJSONURL="$repoUrl/releases/download/latest.json"
+            displayURL="${buildData.homepage}"
+            logoFile="logo.png"
+            authors="${String.join(", ", buildData.authors)}"
+            description="${buildData.description}"
+            [[dependencies.${buildData."mod-id"}]]
+                modId="forge"
+                mandatory=true
+                versionRange="$forgeVersionRange"
+                ordering="NONE"
+                side="BOTH"
+        """.stripIndent()
+        for ( d in buildData.dependencies ) {
+            fileText += """\
+                [[dependencies.${buildData."mod-id"}]]
+                    modId="${d."mod-id"}"
+                    mandatory=${d.mandatory}
+                    versionRange="${d."version-range"}"
+                    ordering="${d.ordering}"
+                    side="${d.side}"
+            """.stripIndent()
+        }
+        file("$projectDir/src/main/resources/META-INF/mods.toml").text = fileText
     }
-    file("$projectDir/src/main/resources/META-INF/mods.toml").text = fileText
 }
-
-build.dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
-assemble.dependsOn "writeUpdateJson", "processAssets", "processData", "writeModsToml"
 
 compileJava {
     source processTemplates.outputs
