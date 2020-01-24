@@ -21,6 +21,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -61,12 +62,22 @@ public class ForgeBusEventHandler
 	{
 		// get this server's WorldType
 		MinecraftServer server = event.getServer();
-		WorldType t = server.getActiveAnvilConverter().getWorldInfo(server.getFolderName()).getGenerator();
+		WorldInfo info = server.getActiveAnvilConverter().getWorldInfo(server.getFolderName());
+		WorldType type = info == null ? null : info.getGenerator();
 
 		// if the server is loading a WorldTypeEOT, inject our factory
-		if (t == WORLD_TYPE_EOT)
+		if (type == WORLD_TYPE_EOT)
 		{
+			LOGGER.info("Detected server configured with {} world type. Injecting custom overworld factory.",
+					WORLD_TYPE_EOT.getName());
 			OVERWORLD.factory = factoryOverride;
+		} else if (type == null)
+		{
+			LOGGER.warn("Server starting with indeterminate world type! Assuming world type is not {}. Ignoring.",
+					WORLD_TYPE_EOT.getName());
+		} else
+		{
+			LOGGER.info("Server starting without {} world type. Ignoring.", WORLD_TYPE_EOT.getName());
 		}
 	}
 
