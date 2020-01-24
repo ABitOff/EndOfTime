@@ -14,4 +14,5 @@ public class Constants
 	public static final String MUTATED_CROP_RL = "%mod-id:%mutated-crop";
 	public static final String SHAPELESS_RECIPE_SERIALIZER_RL = "%mod-id:%shapeless-recipe-serializer";
 	public static final String SHAPED_RECIPE_SERIALIZER_RL = "%mod-id:%shaped-recipe-serializer";
+	public static final String END_OF_TIME_WORLD_TYPE_NAME = "%mod-id.%end-of-time-name";
 }
