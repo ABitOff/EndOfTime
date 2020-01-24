@@ -87,6 +87,8 @@ public class ForgeBusEventHandler
 	@SubscribeEvent
 	public static void onServerStopped(FMLServerStoppedEvent event)
 	{
+		LOGGER.info("Server stopped. Restoring default overworld factory: {}. Was: {}.", factoryDefault,
+				OVERWORLD.factory);
 		OVERWORLD.factory = factoryDefault;
 	}
 
