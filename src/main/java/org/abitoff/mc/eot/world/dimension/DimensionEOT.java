@@ -21,6 +21,7 @@ public class DimensionEOT extends OverworldDimension
 	// super.calculateCelestialAngle(0) == this.calculateCelestialAngle(TIME_OFFSET)
 	// 1.0d + Math.asin((Math.sqrt(2.0d) - 4.0d) / 6.0d) / Math.PI;
 	private static final double TIME_OFFSET = 0.8581734479693928d;
+	public static final long MIDNIGHT_OFFSET = 15404;
 
 	public DimensionEOT(World worldIn, DimensionType typeIn)
 	{

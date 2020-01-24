@@ -1,6 +1,9 @@
 package org.abitoff.mc.eot.event;
 
 import java.util.function.BiFunction;
+
+import javax.annotation.Nullable;
+
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
@@ -12,6 +15,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.FleeSunGoal;
 import net.minecraft.entity.ai.goal.RestrictSunGoal;
 import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.ByteNBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -23,6 +31,8 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -164,5 +174,83 @@ public class ForgeBusEventHandler
 		ZombieEntity zombie = (ZombieEntity) entity;
 		zombie.goalSelector.addGoal(4, new RestrictSunGoal(zombie));
 		zombie.goalSelector.addGoal(4, new FleeSunGoal(zombie, 1.0D));
+	}
+
+	/**
+	 * Gives the first player to log in a crafting table.
+	 */
+	@SubscribeEvent
+	public static void onPlayerLoggedInEvent(PlayerLoggedInEvent event)
+	{
+		PlayerEntity p = event.getPlayer();
+
+		// give the player a crafting table only if the world's overworld dimension doesn't contain the nbt data for
+		// "eotFirstRun"
+		// (CompoundNBT.putBoolean(true) simply puts a ByteNBT(1). So we do the same.)
+		doIfWorldDataNotPresent(p.world, () ->
+		{
+			// give the player a crafting table
+			p.addItemStackToInventory(new ItemStack(Blocks.CRAFTING_TABLE));
+		}, "eotFirstRun", new ByteNBT((byte) 1));
+	}
+
+	/**
+	 * When the world loads for the first time, set the time to midnight.
+	 */
+	@SubscribeEvent
+	public static void onWorldEventLoad(WorldEvent.Load event)
+	{
+		World world = event.getWorld().getWorld();
+
+		// onWorldEventLoad is called for all dimensions. we only need to run this for overworld, so we check for that.
+		if (world.dimension.getType() == OVERWORLD)
+			doIfWorldDataNotPresent(world, () ->
+			{
+				// set the world time
+				world.getWorldInfo().setDayTime(DimensionEOT.MIDNIGHT_OFFSET);
+			}, "eotFirstRun", null);
+	}
+
+	/**
+	 * Runs {@code r} whenever {@code dataName} doesn't exist in the NBT data for the overworld dimension. Optionally
+	 * sets the value for {@code dataName} to {@code setDataIfNotPresent}. If {@code setDataIfNotPresent} is
+	 * {@code null}, it does not put anything for the value of {@code dataName}. <br>
+	 * <b>Note:</b> If the {@link WorldType} of {@code world} is NOT the End of Time world type, this function returns
+	 * before checking NBT data.
+	 * 
+	 * @param world
+	 *            the world whose data to check
+	 * @param r
+	 *            the function to run if the given data isn't present
+	 * @param dataName
+	 *            the nbt tag to check
+	 * @param setDataIfNotPresent
+	 *            the value to place for the nbt tag, if it's not already present. if this is null, no value is set for
+	 *            the nbt tag
+	 */
+	private static void doIfWorldDataNotPresent(World world, Runnable r, String dataName,
+			@Nullable INBT setDataIfNotPresent)
+	{
+		// get the world info and check if it's the End of Time world type
+		WorldInfo info = world.getWorldInfo();
+		if (info.getGenerator() != WORLD_TYPE_EOT)
+			return;
+
+		// get the overworld dimension nbt data
+		CompoundNBT data = info.getDimensionData(OVERWORLD);
+
+		// return if the dimension data contains the tag
+		if (data.contains(dataName))
+			return;
+
+		// if we're meant to set some data, do that.
+		if (setDataIfNotPresent != null)
+		{
+			data.put(dataName, setDataIfNotPresent);
+			info.setDimensionData(OVERWORLD, data);
+		}
+
+		// call r
+		r.run();
 	}
 }
