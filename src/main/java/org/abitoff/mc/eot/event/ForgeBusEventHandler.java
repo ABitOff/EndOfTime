@@ -152,6 +152,9 @@ public class ForgeBusEventHandler
 		LOGGER.warn("Spawn chunk not found! Resorting to default spawn point creation algorithm.");
 	}
 
+	/**
+	 * Zombies are dumb and walk into the sunlight. This makes them stop doing that.
+	 */
 	@SubscribeEvent
 	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event)
 	{
