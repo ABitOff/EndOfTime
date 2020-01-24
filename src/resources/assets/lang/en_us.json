@@ -1,6 +1,9 @@
 {
     "block.%mod-id.%mutated-crop": "Mutated Crop",
+    "block.%mod-id.%mutation-accelerator": "Mutation Accelerator",
+    "container.%mod-id.%mutation-accelerator": "Mutation Accelerator",
     "generator.%mod-id.%end-of-time-name": "End of Time",
     "item.%mod-id.%mutative-cerate": "Mutative Cerate",
-    "item.%mod-id.%mutated-crop": "Mutated Crop"
+    "item.%mod-id.%mutated-crop": "Mutated Crop",
+    "item.%mod-id.%mutation-accelerator": "Mutation Accelerator"
 }

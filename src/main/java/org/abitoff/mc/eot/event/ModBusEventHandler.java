@@ -2,10 +2,13 @@ package org.abitoff.mc.eot.event;
 
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.block.MutatedCropBlock;
+import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.items.MutatedCropItem;
+import org.abitoff.mc.eot.items.MutationAcceleratorItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.recipe.EOTShapedRecipe;
 import org.abitoff.mc.eot.recipe.EOTShapelessRecipe;
+import org.abitoff.mc.eot.tileentity.MutationAcceleratorTileEntity;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.EOTDesertBiome;
 import org.abitoff.mc.eot.world.biome.LavaOceanBiome;
@@ -15,6 +18,7 @@ import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraftforge.common.BiomeManager;
@@ -36,6 +40,7 @@ public class ModBusEventHandler
 	public static void onBlockRegistryEvent(RegistryEvent.Register<Block> event)
 	{
 		event.getRegistry().register(MutatedCropBlock.get());
+		event.getRegistry().register(MutationAcceleratorBlock.get());
 	}
 
 	@SubscribeEvent
@@ -43,6 +48,13 @@ public class ModBusEventHandler
 	{
 		event.getRegistry().register(MutativeCerateItem.get());
 		event.getRegistry().register(MutatedCropItem.get());
+		event.getRegistry().register(MutationAcceleratorItem.get());
+	}
+
+	@SubscribeEvent
+	public static void registerTE(RegistryEvent.Register<TileEntityType<?>> event)
+	{
+		event.getRegistry().register(MutationAcceleratorTileEntity.get());
 	}
 
 	@SubscribeEvent

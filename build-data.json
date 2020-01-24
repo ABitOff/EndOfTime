@@ -24,6 +24,8 @@
         "eot-desert-biome": "eot_desert",
         "mutative-cerate": "mutative_cerate",
         "mutated-crop": "mutated_crop",
+        "mutation-accelerator": "mutation_accelerator",
+        "mutation-accelerator-te": "mutation_accelerator_tile_entity",
         "shapeless-recipe-serializer": "crafting_special_eot_shapeless",
         "shaped-recipe-serializer": "crafting_special_eot_shaped",
         "end-of-time-name": "end_of_time"
