@@ -36,9 +36,10 @@ public class MutationAcceleratorBlock extends ContainerBlock
 {
 	private static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_0_15;
 	private static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
-	private static final MutationAcceleratorBlock INSTANCE = (MutationAcceleratorBlock) new MutationAcceleratorBlock(
-			Properties.create(Material.ROCK, MaterialColor.SAND).hardnessAndResistance(0.8f).lightValue(15))
-					.setRegistryName(Constants.MUTATION_ACCELERATOR_RL);
+	private static final MutationAcceleratorBlock INSTANCE =
+			(MutationAcceleratorBlock) new MutationAcceleratorBlock(Properties.create(Material.ROCK, MaterialColor.SAND)
+					.hardnessAndResistance(0.8f).lightValue(15).tickRandomly())
+							.setRegistryName(Constants.MUTATION_ACCELERATOR_RL);
 
 	protected MutationAcceleratorBlock(Properties builder)
 	{
@@ -141,6 +142,16 @@ public class MutationAcceleratorBlock extends ContainerBlock
 			worldIn.addParticle(ParticleTypes.MYCELIUM, pos.getX() + rand.nextDouble(), pos.getY() + 1.1,
 					pos.getZ() + rand.nextDouble(), 0.1 * level - 0.1, 0.1 * level - 0.1, 0.1 * level - 0.1);
 		}
+	}
+
+	public void tick(BlockState state, World worldIn, BlockPos pos, Random random)
+	{
+		
+	}
+
+	public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
+	{
+
 	}
 
 	public static MutationAcceleratorBlock get()

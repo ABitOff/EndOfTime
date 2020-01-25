@@ -8,6 +8,7 @@ import org.abitoff.mc.eot.items.MutationAcceleratorItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.recipe.EOTShapedRecipe;
 import org.abitoff.mc.eot.recipe.EOTShapelessRecipe;
+import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 import org.abitoff.mc.eot.tileentity.MutationAcceleratorTileEntity;
 import org.abitoff.mc.eot.world.biome.DeepLavaOceanBiome;
 import org.abitoff.mc.eot.world.biome.EOTDesertBiome;
@@ -72,5 +73,6 @@ public class ModBusEventHandler
 	{
 		event.getRegistry().register(EOTShapelessRecipe.SERIALIZER);
 		event.getRegistry().register(EOTShapedRecipe.SERIALIZER);
+		event.getRegistry().register(MutationAcceleratorRecipe.SERIALIZER);
 	}
 }

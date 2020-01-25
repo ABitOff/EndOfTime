@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import java.util.Arrays
 import java.util.stream.Collectors
 import org.kohsuke.github.GitHubBuilder
 
@@ -215,8 +216,10 @@ def filterConstants(line, buildData) {
         *: buildData,
         *: buildData."resource-locations"
     ]
+    def keys = map.keySet().toArray();
+    Arrays.sort(keys, { String a, String b -> b.length() - a.length() });
     def out = line
-    for ( key in map.keySet() ) {
+    for ( key in keys ) {
         def val = map[key]
         if(val instanceof String || val instanceof Number || val instanceof Boolean || val == null)
             out = out.replaceAll("%$key", String.valueOf(map[key])) // String.valueOf in case of null

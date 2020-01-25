@@ -1,0 +1,65 @@
+{
+    "type": "%mod-id:%mutation-accelerator-serializer",
+    "mutation_tree": [{
+            "specimen": "minecraft:oak_sapling",
+            "groups": [{
+                "group": "saplings",
+                "weight": 1.5
+            }],
+            "results": [{
+                "group": "saplings",
+                "weight": 2
+            }, {
+                "group": "sapling-like"
+            }]
+        },
+        {
+            "specimen": "minecraft:spruce_sapling",
+            "groups": ["saplings"],
+            "results": [{
+                    "group": "saplings",
+                    "weight": 2
+                },
+                {
+                    "group": "sapling-like"
+                }
+            ]
+        },
+        {
+            "specimen": "minecraft:fern",
+            "groups": ["sapling-like"],
+            "results": [{
+                    "group": "saplings"
+                },
+                {
+                    "group": "sapling-like",
+                    "weight": 2
+                }
+            ]
+        },
+        {
+            "specimen": "minecraft:grass",
+            "groups": ["sapling-like"],
+            "results": [{
+                    "group": "saplings"
+                },
+                {
+                    "group": "sapling-like",
+                    "weight": 2
+                }
+            ]
+        },
+        {
+            "specimen": "minecraft:sweet_berries",
+            "groups": ["sapling-like"],
+            "results": [{
+                    "group": "saplings"
+                },
+                {
+                    "group": "sapling-like",
+                    "weight": 2
+                }
+            ]
+        }
+    ]
+}
