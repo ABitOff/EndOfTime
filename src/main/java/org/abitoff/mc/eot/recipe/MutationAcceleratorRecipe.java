@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
@@ -108,7 +109,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 			{
 				JsonObject mtEntry = JSONUtils.getJsonObject(el, "mutation_tree entry");
 				Item specimen = JSONUtils.getItem(mtEntry, "specimen");
-				JsonArray specimenGroups = JSONUtils.getJsonArray(mtEntry, "groups");
+				JsonArray specimenGroups = JSONUtils.getJsonArray(mtEntry, "groups", null);
+				if (specimenGroups == null)
+					continue; // skip specimen which don't aren't in any groups
 				for (JsonElement groupEl: specimenGroups)
 				{
 					String groupName;
@@ -224,7 +227,17 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 			LOGGER.info("LOGGING MUTATION TREE");
 			for (Entry<Item, List<Pair<Item, Float>>> e: finalTree.entrySet())
 			{
+				if (e.getValue().size() == 0)
+					continue;
 				LOGGER.info("{}:", e.getKey().getRegistryName());
+				e.getValue().sort((a, b) ->
+				{
+					int compare = Float.compare(a.getSecond(), b.getSecond());
+					if (compare != 0)
+						return compare;
+					return a.getFirst().getRegistryName().toString()
+							.compareToIgnoreCase(a.getFirst().getRegistryName().toString());
+				});
 				for (Pair<Item, Float> p: e.getValue())
 				{
 					LOGGER.info("\t{}: {}", p.getFirst().getRegistryName(), p.getSecond());

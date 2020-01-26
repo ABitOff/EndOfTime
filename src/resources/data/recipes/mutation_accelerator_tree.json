@@ -1,65 +1,386 @@
 {
     "type": "%mod-id:%mutation-accelerator-serializer",
+
+    "plants": {
+        "minecraft:dead_bush": [],
+
+        "minecraft:cocoa_beans": ["seeds", "food-yielding"],
+        "minecraft:wheat_seeds": ["crops", "seeds", "food-yielding"],
+        "minecraft:beetroot_seeds": ["crops", "seeds", "food-yielding"],
+        "minecraft:melon_seeds": ["crops", "seeds", "food-yielding"],
+        "minecraft:pumpkin_seeds": ["crops", "seeds", "food-yielding"],
+        "minecraft:carrot": ["crops", "food-yielding"],
+        "minecraft:potato": ["crops", "food-yielding"],
+
+        "minecraft:bamboo": ["tall", "grasses"],
+        "minecraft:sugar_cane": ["tall", "grasses"],
+        "minecraft:cactus": ["tall", "spiny"],
+        "minecraft:kelp": ["tall", "water"],
+
+        "minecraft:grass": ["grasses"],
+        "minecraft:tall_grass": ["grasses"],
+        "minecraft:fern": ["grasses", "bushes"],
+        "minecraft:large_fern": ["grasses", "bushes"],
+        "minecraft:seagrass": ["grasses", "water"],
+
+        "minecraft:lily_pad": ["water"],
+
+        "minecraft:dandelion": ["flowers"],
+        "minecraft:poppy": ["flowers"],
+        "minecraft:blue_orchid": ["flowers"],
+        "minecraft:allium": ["flowers"],
+        "minecraft:azure_bluet": ["flowers"],
+        "minecraft:red_tulip": ["flowers", "tulip"],
+        "minecraft:orange_tulip": ["flowers", "tulip"],
+        "minecraft:white_tulip": ["flowers", "tulip"],
+        "minecraft:pink_tulip": ["flowers", "tulip"],
+        "minecraft:oxeye_daisy": ["flowers"],
+        "minecraft:cornflower": ["flowers"],
+        "minecraft:lily_of_the_valley": ["flowers"],
+        "minecraft:wither_rose": ["flowers"],
+        "minecraft:sunflower": ["flowers"],
+        "minecraft:lilac": ["flowers"],
+        "minecraft:rose_bush": ["flowers", "bushes"],
+        "minecraft:peony": ["flowers"],
+
+        "minecraft:oak_sapling": ["saplings", "bushes"],
+        "minecraft:spruce_sapling": ["saplings", "bushes"],
+        "minecraft:birch_sapling": ["saplings", "bushes"],
+        "minecraft:jungle_sapling": ["saplings", "bushes"],
+        "minecraft:acacia_sapling": ["saplings", "bushes"],
+        "minecraft:dark_oak_sapling": ["saplings", "bushes"],
+
+        "minecraft:sweet_berries": ["bushes", "food-yielding", "spiny"],
+
+        "minecraft:sea_pickle": ["plant-like", "water"],
+        "minecraft:brown_mushroom": ["plant-like", "fungal"],
+        "minecraft:red_mushroom": ["plant-like", "fungal"],
+        "minecraft:chorus_flower": ["plant-like", "alien"],
+        "minecraft:nether_wart": ["plant-like", "fungal", "alien"],
+
+        "minecraft:tube_coral": ["coral", "water"],
+        "minecraft:brain_coral": ["coral", "water"],
+        "minecraft:bubble_coral": ["coral", "water"],
+        "minecraft:fire_coral": ["coral", "water"],
+        "minecraft:horn_coral": ["coral", "water"],
+        "minecraft:tube_coral_fan": ["coral", "water"],
+        "minecraft:brain_coral_fan": ["coral", "water"],
+        "minecraft:bubble_coral_fan": ["coral", "water"],
+        "minecraft:fire_coral_fan": ["coral", "water"],
+        "minecraft:horn_coral_fan": ["coral", "water"]
+    },
     "mutation_tree": [{
-            "specimen": "minecraft:oak_sapling",
-            "groups": [{
-                "group": "saplings",
-                "weight": 1.5
-            }],
+            "specimen": "minecraft:dead_bush",
             "results": [{
-                "group": "saplings",
-                "weight": 2
+                "item": "minecraft:dead_bush",
+                "weight": 10
             }, {
-                "group": "sapling-like"
+                "group": "grasses",
+                "weight": 3
+            }, {
+                "group": "spiny",
+                "weight": 3
+            }, {
+                "group": "bushes",
+                "weight": 2.5
+            }, {
+                "group": "seeds",
+                "weight": 1
+            }, {
+                "group": "crops",
+                "weight": 1
+            }, {
+                "group": "fungal",
+                "weight": 1
+            }, {
+                "group": "flowers",
+                "weight": 0.7
+            }, {
+                "group": "water",
+                "weight": 0.5
+            }, {
+                "group": "alien",
+                "weight": 0.08
             }]
+        }, {
+            "specimen": "minecraft:cocoa_beans",
+            "groups": ["seeds", "food-yielding"],
+            "results": []
         },
         {
-            "specimen": "minecraft:spruce_sapling",
-            "groups": ["saplings"],
-            "results": [{
-                    "group": "saplings",
-                    "weight": 2
-                },
-                {
-                    "group": "sapling-like"
-                }
-            ]
+            "specimen": "minecraft:wheat_seeds",
+            "groups": ["crops", "seeds", "food-yielding"],
+            "results": []
         },
         {
-            "specimen": "minecraft:fern",
-            "groups": ["sapling-like"],
-            "results": [{
-                    "group": "saplings"
-                },
-                {
-                    "group": "sapling-like",
-                    "weight": 2
-                }
-            ]
+            "specimen": "minecraft:beetroot_seeds",
+            "groups": ["crops", "seeds", "food-yielding"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:melon_seeds",
+            "groups": ["crops", "seeds", "food-yielding"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:pumpkin_seeds",
+            "groups": ["crops", "seeds", "food-yielding"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:carrot",
+            "groups": ["crops", "food-yielding"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:potato",
+            "groups": ["crops", "food-yielding"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:bamboo",
+            "groups": ["tall", "grasses"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:sugar_cane",
+            "groups": ["tall", "grasses"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:cactus",
+            "groups": ["tall", "spiny"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:kelp",
+            "groups": ["tall", "water"],
+            "results": []
         },
         {
             "specimen": "minecraft:grass",
-            "groups": ["sapling-like"],
-            "results": [{
-                    "group": "saplings"
-                },
-                {
-                    "group": "sapling-like",
-                    "weight": 2
-                }
-            ]
+            "groups": ["grasses"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:tall_grass",
+            "groups": ["grasses"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:fern",
+            "groups": ["grasses", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:large_fern",
+            "groups": ["grasses", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:seagrass",
+            "groups": ["grasses", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:lily_pad",
+            "groups": ["water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:dandelion",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:poppy",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:blue_orchid",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:allium",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:azure_bluet",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:red_tulip",
+            "groups": ["flowers", "tulip"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:orange_tulip",
+            "groups": ["flowers", "tulip"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:white_tulip",
+            "groups": ["flowers", "tulip"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:pink_tulip",
+            "groups": ["flowers", "tulip"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:oxeye_daisy",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:cornflower",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:lily_of_the_valley",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:wither_rose",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:sunflower",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:lilac",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:rose_bush",
+            "groups": ["flowers", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:peony",
+            "groups": ["flowers"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:oak_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:spruce_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:birch_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:jungle_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:acacia_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:dark_oak_sapling",
+            "groups": ["saplings", "bushes"],
+            "results": []
         },
         {
             "specimen": "minecraft:sweet_berries",
-            "groups": ["sapling-like"],
-            "results": [{
-                    "group": "saplings"
-                },
-                {
-                    "group": "sapling-like",
-                    "weight": 2
-                }
-            ]
+            "groups": ["bushes", "food-yielding", "spiny"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:sea_pickle",
+            "groups": ["plant-like", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:brown_mushroom",
+            "groups": ["plant-like", "fungal"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:red_mushroom",
+            "groups": ["plant-like", "fungal"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:chorus_flower",
+            "groups": ["plant-like", "alien"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:nether_wart",
+            "groups": ["plant-like", "fungal", "alien"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:tube_coral",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:brain_coral",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:bubble_coral",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:fire_coral",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:horn_coral",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:tube_coral_fan",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:brain_coral_fan",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:bubble_coral_fan",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:fire_coral_fan",
+            "groups": ["coral", "water"],
+            "results": []
+        },
+        {
+            "specimen": "minecraft:horn_coral_fan",
+            "groups": ["coral", "water"],
+            "results": []
         }
     ]
 }
