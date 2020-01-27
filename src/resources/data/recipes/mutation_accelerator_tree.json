@@ -73,28 +73,32 @@
             "specimen": "minecraft:dead_bush",
             "results": [{
                 "item": "minecraft:dead_bush",
-                "weight": 10
+                "weight": 100
             }, {
                 "group": "grasses",
-                "weight": 3
+                "weight": 30
+            }, {
+                "group": "tall",
+                "weight": 1,
+                "merge": "min"
             }, {
                 "group": "spiny",
-                "weight": 3
+                "weight": 30
             }, {
                 "group": "bushes",
-                "weight": 2.5
+                "weight": 25
             }, {
                 "group": "seeds",
-                "weight": 1
+                "weight": 20
             }, {
                 "group": "crops",
-                "weight": 1
+                "weight": 20
             }, {
                 "group": "fungal",
-                "weight": 1
+                "weight": 10
             }, {
                 "group": "flowers",
-                "weight": 0.7
+                "weight": 5
             }, {
                 "group": "water",
                 "weight": 0.5
@@ -104,17 +108,35 @@
             }]
         }, {
             "specimen": "minecraft:cocoa_beans",
-            "groups": ["seeds", "food-yielding"],
+            "groups": [{
+                "group": "seeds",
+                "weight": 0.25
+            }, {
+                "group": "food-yielding",
+                "weight": 0.25
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:wheat_seeds",
-            "groups": ["crops", "seeds", "food-yielding"],
+            "groups": [{
+                "group": "crops",
+                "weight": 5
+            }, {
+                "group": "seeds",
+                "weight": 5
+            }, "food-yielding"],
             "results": []
         },
         {
             "specimen": "minecraft:beetroot_seeds",
-            "groups": ["crops", "seeds", "food-yielding"],
+            "groups": [{
+                "group": "crops",
+                "weight": 0.5
+            }, {
+                "group": "seeds",
+                "weight": 0.5
+            }, "food-yielding"],
             "results": []
         },
         {
@@ -129,32 +151,53 @@
         },
         {
             "specimen": "minecraft:carrot",
-            "groups": ["crops", "food-yielding"],
+            "groups": [{
+                "group": "crops",
+                "weight": 2
+            }, "food-yielding"],
             "results": []
         },
         {
             "specimen": "minecraft:potato",
-            "groups": ["crops", "food-yielding"],
+            "groups": [{
+                "group": "crops",
+                "weight": 2
+            }, "food-yielding"],
             "results": []
         },
         {
             "specimen": "minecraft:bamboo",
-            "groups": ["tall", "grasses"],
+            "groups": [{
+                "group": "tall",
+                "weight": 0.5
+            }, {
+                "group": "grasses",
+                "weight": 0.25
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:sugar_cane",
-            "groups": ["tall", "grasses"],
+            "groups": ["tall", {
+                "group": "grasses",
+                "weight": 0.5
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:cactus",
-            "groups": ["tall", "spiny"],
+            "groups": ["tall", {
+                "group": "spiny",
+                "weight": 2
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:kelp",
-            "groups": ["tall", "water"],
+            "groups": [{
+                "group": "tall",
+                "weight": 0.25
+            }, "water"],
             "results": []
         },
         {
@@ -179,7 +222,10 @@
         },
         {
             "specimen": "minecraft:seagrass",
-            "groups": ["grasses", "water"],
+            "groups": [{
+                "group": "grasses",
+                "weight": 0.25
+            }, "water"],
             "results": []
         },
         {
@@ -249,7 +295,10 @@
         },
         {
             "specimen": "minecraft:wither_rose",
-            "groups": ["flowers"],
+            "groups": [{
+                "group": "flowers",
+                "weight": 0.05
+            }],
             "results": []
         },
         {
@@ -274,7 +323,10 @@
         },
         {
             "specimen": "minecraft:oak_sapling",
-            "groups": ["saplings", "bushes"],
+            "groups": [{
+                "group": "saplings",
+                "weight": 3
+            }, "bushes"],
             "results": []
         },
         {
@@ -309,7 +361,10 @@
         },
         {
             "specimen": "minecraft:sea_pickle",
-            "groups": ["plant-like", "water"],
+            "groups": [{
+                "group": "plant-like",
+                "weight": 0.5
+            }, "water"],
             "results": []
         },
         {
@@ -324,62 +379,104 @@
         },
         {
             "specimen": "minecraft:chorus_flower",
-            "groups": ["plant-like", "alien"],
+            "groups": [{
+                "group": "plant-like",
+                "weight": 0.05
+            }, {
+                "group": "alien",
+                "weight": 0.5
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:nether_wart",
-            "groups": ["plant-like", "fungal", "alien"],
+            "groups": [{
+                "group": "plant-like",
+                "weight": 0.125
+            }, {
+                "group": "fungal",
+                "weight": 0.125
+            }, "alien"],
             "results": []
         },
         {
             "specimen": "minecraft:tube_coral",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:brain_coral",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:bubble_coral",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:fire_coral",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:horn_coral",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:tube_coral_fan",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:brain_coral_fan",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:bubble_coral_fan",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:fire_coral_fan",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         },
         {
             "specimen": "minecraft:horn_coral_fan",
-            "groups": ["coral", "water"],
+            "groups": ["coral", {
+                "group": "water",
+                "weight": 0.1
+            }],
             "results": []
         }
     ]

@@ -1,13 +1,16 @@
 package org.abitoff.mc.eot.recipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.abitoff.mc.eot.Constants;
 import org.apache.logging.log4j.LogManager;
@@ -141,16 +144,16 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 			// this second pass finds all the results for this specimen, including any results only referenced by group.
 			for (JsonElement el: mutationTree)
 			{
-				List<Pair<Item, Float>> itemResults = new ArrayList<Pair<Item, Float>>();
-				List<Pair<String, Float>> groupResults = new ArrayList<Pair<String, Float>>();
+				List<Result> results = new ArrayList<Result>();
 				JsonObject mtEntry = JSONUtils.getJsonObject(el, "mutation_tree entry");
 				Item specimen = JSONUtils.getItem(mtEntry, "specimen");
-				JsonArray results = JSONUtils.getJsonArray(mtEntry, "results");
-				for (JsonElement result: results)
+				JsonArray jsonResults = JSONUtils.getJsonArray(mtEntry, "results");
+				for (JsonElement result: jsonResults)
 				{
 					String group = null;
 					Item item = null;
 					float weight;
+					Result.MergeType mergeType;
 					if (result.isJsonObject())
 					{
 						JsonObject resultObj = result.getAsJsonObject();
@@ -159,29 +162,20 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 						else
 							item = JSONUtils.getItem(resultObj, "item");
 						weight = JSONUtils.getFloat(resultObj, "weight", 1);
+						String mt = JSONUtils.getString(resultObj, "merge", null);
+						mergeType = mt == null ? Result.MergeType.LAST : Result.MergeType.valueOf(mt.toUpperCase());
 					} else if (result.isJsonPrimitive() && result.getAsJsonPrimitive().isString())
 					{
 						item = JSONUtils.getItem(result, null);
 						weight = 1;
+						mergeType = Result.MergeType.LAST;
 					} else
 					{
 						throw new JsonSyntaxException(
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
-					if (item != null)
-					{
-						if (group != null)
-						{
-							// having "item" and "group" defined seems weird and is unintended.
-							throw new JsonSyntaxException(
-									"Each entry of \"results\" must either define \"item\" or \"group\". Not both! Was "
-											+ JSONUtils.toString(result));
-						}
-						itemResults.add(new Pair<Item, Float>(item, weight));
-					}
-					if (group != null)
-						groupResults.add(new Pair<String, Float>(group, weight));
+					results.add(new Result(group, item, weight, mergeType));
 				}
 
 				// a specimen might have the same result listed twice, or include a result which was already included in
@@ -192,27 +186,54 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 				// as we iterate through the elements again, we need to finally start calculating the true percentages
 				// from the weights we've been given
 				float weightSum = 0;
-				for (Pair<String, Float> p: groupResults)
+				for (Result r: results)
 				{
-					float weight = p.getSecond();
-					List<Pair<Item, Float>> group = groups.get(p.getFirst());
-					for (Pair<Item, Float> g: group)
+					List<Pair<Item, Float>> group;
+					if (r.isGroup())
+						group = groups.get(r.group);
+					else
+						group = Arrays.asList(new Pair<Item, Float>(r.item, 1f));
+
+					for (Pair<Item, Float> p: group)
 					{
 						// multiply the result weight with the group weight to get the actual weight
-						float actualWeight = g.getSecond() * weight;
-						// since there might be multiple entries for a single item, we need to be careful not to count
-						// an item's weight twice. because of this, we use `previous` to check if we replaced an item,
-						// and if we did, we need to subtract its weight from the total.
-						Float previous = uniqueResults.put(g.getFirst(), actualWeight);
-						previous = (previous == null) ? 0 : previous;
-						weightSum += actualWeight - previous;
+						float actualWeight = p.getSecond() * r.weight;
+
+						// next we merge this item's previous weight with the current one, using the MergeType
+						// specified. we need to be careful not to count an item's weight twice. because of this, we use
+						// `previous` to track the value we replace. we then subtract the replaced value from the total.
+
+						// we have to put previous on the heap in order to change it in the lambda. i decided to do that
+						// by wrapping it in an array.
+						float[] previous = new float[] {0f};
+						uniqueResults.merge(p.getFirst(), actualWeight, (oldValue, newValue) ->
+						{
+							float actualValue;
+							switch (r.merge)
+							{
+								case MAX:
+									actualValue = Math.max(oldValue, newValue);
+									break;
+								case MIN:
+									actualValue = Math.min(oldValue, newValue);
+									break;
+								case FIRST:
+									actualValue = oldValue;
+									break;
+								case LAST:
+								default:
+									actualValue = newValue;
+									break;
+							}
+							// actualValue is the actual new weight for this item. thus, the other value is the actual
+							// old weight for this item. we need to subtract the old value from the sum, so we need a
+							// way to get it out of this lambda. we do that here.
+							previous[0] = actualValue == oldValue ? newValue : oldValue;
+							return actualValue;
+						});
+						// add the new weight to the sum, subtracting the old weight if necessary.
+						weightSum += actualWeight - previous[0];
 					}
-				}
-				for (Pair<Item, Float> p: itemResults)
-				{
-					Float previous = uniqueResults.put(p.getFirst(), p.getSecond());
-					previous = (previous == null) ? 0 : previous;
-					weightSum += p.getSecond() - previous;
 				}
 
 				// must be final for use in a lambda.
@@ -232,15 +253,16 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 				LOGGER.info("{}:", e.getKey().getRegistryName());
 				e.getValue().sort((a, b) ->
 				{
-					int compare = Float.compare(a.getSecond(), b.getSecond());
+					int compare = Float.compare(b.getSecond(), a.getSecond());
 					if (compare != 0)
 						return compare;
 					return a.getFirst().getRegistryName().toString()
-							.compareToIgnoreCase(a.getFirst().getRegistryName().toString());
+							.compareToIgnoreCase(b.getFirst().getRegistryName().toString());
 				});
 				for (Pair<Item, Float> p: e.getValue())
 				{
-					LOGGER.info("\t{}: {}", p.getFirst().getRegistryName(), p.getSecond());
+					LOGGER.info("\t{}: {}%", p.getFirst().getRegistryName(),
+							(float) Math.round(p.getSecond() * 100000f) / 1000f);
 				}
 			}
 
@@ -284,6 +306,39 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 					buffer.writeInt(Item.getIdFromItem(p.getFirst()));
 					buffer.writeFloat(p.getSecond());
 				}
+			}
+		}
+
+		private static final class Result
+		{
+			@Nullable
+			private final String group;
+			@Nullable
+			private final Item item;
+			private final float weight;
+			@Nonnull
+			private final MergeType merge;
+
+			private Result(@Nullable String group, @Nullable Item item, float weight, @Nonnull MergeType merge)
+			{
+				assert group == null ^ item == null;
+				this.group = group;
+				this.item = item;
+				this.weight = weight;
+				this.merge = merge;
+			}
+
+			private boolean isGroup()
+			{
+				return group != null;
+			}
+
+			private static enum MergeType
+			{
+				MAX,
+				MIN,
+				FIRST,
+				LAST
 			}
 		}
 	}
