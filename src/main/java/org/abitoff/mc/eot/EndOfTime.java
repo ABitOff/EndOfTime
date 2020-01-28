@@ -1,14 +1,22 @@
 package org.abitoff.mc.eot;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
@@ -19,6 +27,7 @@ import net.minecraft.world.gen.feature.structure.DesertVillagePools;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -33,6 +42,7 @@ public class EndOfTime
 	public EndOfTime()
 	{
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -52,5 +62,18 @@ public class EndOfTime
 		JigsawManager.field_214891_a
 				.register(new JigsawPattern(new ResourceLocation(Constants.MOD_ID, "village/eot/town_centers"),
 						new ResourceLocation("empty"), pairList, JigsawPattern.PlacementBehaviour.RIGID));
+	}
+
+	private void enqueueIMC(final InterModEnqueueEvent event)
+	{
+		try (Reader r = new FileReader(
+				new File("Z:\\EndOfTime\\src\\main\\resources\\data\\eot\\recipes\\mutation_accelerator_tree.json")))
+		{
+			((SpecialRecipeSerializer<?>) MutationAcceleratorRecipe.SERIALIZER).read(new ResourceLocation("null"),
+					new Gson().fromJson(r, JsonObject.class));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

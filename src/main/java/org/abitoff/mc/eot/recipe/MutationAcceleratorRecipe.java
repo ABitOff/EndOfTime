@@ -175,6 +175,8 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
+					LOGGER.info("{}.{} = {}", specimen.getRegistryName(),
+							group == null ? item.getRegistryName() : group, mergeType.name());
 					results.add(new Result(group, item, weight, mergeType));
 				}
 
@@ -206,8 +208,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 						// we have to put previous on the heap in order to change it in the lambda. i decided to do that
 						// by wrapping it in an array.
 						float[] previous = new float[] {0f};
-						uniqueResults.merge(p.getFirst(), actualWeight, (oldValue, newValue) ->
+						actualWeight = uniqueResults.merge(p.getFirst(), actualWeight, (oldValue, newValue) ->
 						{
+							previous[0] = oldValue;
 							float actualValue;
 							switch (r.merge)
 							{
@@ -225,10 +228,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 									actualValue = newValue;
 									break;
 							}
-							// actualValue is the actual new weight for this item. thus, the other value is the actual
-							// old weight for this item. we need to subtract the old value from the sum, so we need a
-							// way to get it out of this lambda. we do that here.
-							previous[0] = actualValue == oldValue ? newValue : oldValue;
+							LOGGER.info("for {}, merging {} and {} using {}. old = {}. new = {}.",
+									p.getFirst().getRegistryName(), oldValue, newValue, r.merge.name(), previous[0],
+									actualValue);
 							return actualValue;
 						});
 						// add the new weight to the sum, subtracting the old weight if necessary.

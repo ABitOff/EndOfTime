@@ -70,63 +70,32 @@
         "minecraft:horn_coral_fan": ["coral", "water"]
     },
     "mutation_tree": [{
-            "specimen": "minecraft:dead_bush",
-            "results": [{
-                "item": "minecraft:dead_bush",
-                "weight": 100
-            }, {
-                "group": "grasses",
-                "weight": 30
-            }, {
-                "group": "tall",
-                "weight": 1,
-                "merge": "min"
-            }, {
-                "group": "spiny",
-                "weight": 30
-            }, {
-                "group": "bushes",
-                "weight": 25
-            }, {
-                "group": "seeds",
-                "weight": 20
-            }, {
-                "group": "crops",
-                "weight": 20
-            }, {
-                "group": "fungal",
-                "weight": 10
-            }, {
-                "group": "flowers",
-                "weight": 5
-            }, {
-                "group": "water",
-                "weight": 0.5
-            }, {
-                "group": "alien",
-                "weight": 0.08
-            }]
-        }, {
-            "specimen": "minecraft:cocoa_beans",
-            "groups": [{
-                "group": "seeds",
-                "weight": 0.25
-            }, {
-                "group": "food-yielding",
-                "weight": 0.25
-            }],
-            "results": []
-        },
-        {
             "specimen": "minecraft:wheat_seeds",
             "groups": [{
                 "group": "crops",
-                "weight": 5
+                "weight": 1.5
             }, {
                 "group": "seeds",
-                "weight": 5
+                "weight": 1.5
             }, "food-yielding"],
-            "results": []
+            "results": [{
+                "group": "seeds",
+                "weight": 3
+            }, {
+                "group": "crops",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:beetroot_seeds",
@@ -137,32 +106,93 @@
                 "group": "seeds",
                 "weight": 0.5
             }, "food-yielding"],
-            "results": []
+            "results": [{
+                "group": "seeds",
+                "weight": 3
+            }, {
+                "group": "crops",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:melon_seeds",
-            "groups": ["crops", "seeds", "food-yielding"],
-            "results": []
+            "groups": ["crops", "seeds", "food-yielding", "melons"],
+            "results": [{
+                "group": "melons",
+                "weight": 20
+            }, {
+                "group": "seeds",
+                "weight": 3
+            }, {
+                "group": "crops",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:pumpkin_seeds",
-            "groups": ["crops", "seeds", "food-yielding"],
-            "results": []
+            "groups": ["crops", "seeds", "food-yielding", "melons"],
+            "results": [{
+                "group": "melons",
+                "weight": 20
+            }, {
+                "group": "seeds",
+                "weight": 3
+            }, {
+                "group": "crops",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:carrot",
-            "groups": [{
-                "group": "crops",
-                "weight": 2
-            }, "food-yielding"],
+            "groups": ["crops", "food-yielding"],
             "results": []
         },
         {
             "specimen": "minecraft:potato",
+            "groups": ["crops", "food-yielding"],
+            "results": []
+        }, {
+            "specimen": "minecraft:cocoa_beans",
             "groups": [{
-                "group": "crops",
-                "weight": 2
-            }, "food-yielding"],
+                "group": "seeds",
+                "weight": 0.25
+            }, {
+                "group": "food-yielding",
+                "weight": 0.25
+            }],
             "results": []
         },
         {
