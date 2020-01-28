@@ -26,6 +26,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
@@ -175,8 +176,8 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
-					LOGGER.info("{}.{} = {}", specimen.getRegistryName(),
-							group == null ? item.getRegistryName() : group, mergeType.name());
+					LOGGER.info("{}.{} = {}({}, other)", specimen.getRegistryName(),
+							group == null ? item.getRegistryName() : group, mergeType.name(), weight);
 					results.add(new Result(group, item, weight, mergeType));
 				}
 

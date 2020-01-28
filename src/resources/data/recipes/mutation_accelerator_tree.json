@@ -130,10 +130,11 @@
             "groups": ["crops", "seeds", "food-yielding", "melons"],
             "results": [{
                 "group": "melons",
-                "weight": 20
+                "weight": 8
             }, {
                 "group": "seeds",
-                "weight": 3
+                "weight": 3,
+                "merge": "max"
             }, {
                 "group": "crops",
                 "merge": "max"
@@ -155,10 +156,11 @@
             "groups": ["crops", "seeds", "food-yielding", "melons"],
             "results": [{
                 "group": "melons",
-                "weight": 20
+                "weight": 8
             }, {
                 "group": "seeds",
-                "weight": 3
+                "weight": 3,
+                "merge": "max"
             }, {
                 "group": "crops",
                 "merge": "max"
