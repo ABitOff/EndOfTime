@@ -26,7 +26,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
@@ -115,7 +114,7 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 				Item specimen = JSONUtils.getItem(mtEntry, "specimen");
 				JsonArray specimenGroups = JSONUtils.getJsonArray(mtEntry, "groups", null);
 				if (specimenGroups == null)
-					continue; // skip specimen which don't aren't in any groups
+					continue; // skip specimen which aren't in any groups
 				for (JsonElement groupEl: specimenGroups)
 				{
 					String groupName;
@@ -164,19 +163,19 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 							item = JSONUtils.getItem(resultObj, "item");
 						weight = JSONUtils.getFloat(resultObj, "weight", 1);
 						String mt = JSONUtils.getString(resultObj, "merge", null);
-						mergeType = mt == null ? Result.MergeType.LAST : Result.MergeType.valueOf(mt.toUpperCase());
+						mergeType = mt == null ? Result.MergeType.NEW : Result.MergeType.valueOf(mt.toUpperCase());
 					} else if (result.isJsonPrimitive() && result.getAsJsonPrimitive().isString())
 					{
 						item = JSONUtils.getItem(result, null);
 						weight = 1;
-						mergeType = Result.MergeType.LAST;
+						mergeType = Result.MergeType.NEW;
 					} else
 					{
 						throw new JsonSyntaxException(
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
-					LOGGER.info("{}.{} = {}({}, other)", specimen.getRegistryName(),
+					LOGGER.info("{}.{} = {}({})", specimen.getRegistryName(),
 							group == null ? item.getRegistryName() : group, mergeType.name(), weight);
 					results.add(new Result(group, item, weight, mergeType));
 				}
@@ -221,10 +220,10 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 								case MIN:
 									actualValue = Math.min(oldValue, newValue);
 									break;
-								case FIRST:
+								case OLD:
 									actualValue = oldValue;
 									break;
-								case LAST:
+								case NEW:
 								default:
 									actualValue = newValue;
 									break;
@@ -340,8 +339,8 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 			{
 				MAX,
 				MIN,
-				FIRST,
-				LAST
+				OLD,
+				NEW
 			}
 		}
 	}

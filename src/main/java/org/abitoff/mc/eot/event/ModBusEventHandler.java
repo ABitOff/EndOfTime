@@ -3,6 +3,7 @@ package org.abitoff.mc.eot.event;
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.block.MutatedCropBlock;
 import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
+import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutatedCropItem;
 import org.abitoff.mc.eot.items.MutationAcceleratorItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
@@ -17,6 +18,7 @@ import org.abitoff.mc.eot.world.biome.LavaRiverBiome;
 import org.abitoff.mc.eot.world.biome.provider.BiomeProviderTypeEOT;
 
 import net.minecraft.block.Block;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
@@ -53,7 +55,7 @@ public class ModBusEventHandler
 	}
 
 	@SubscribeEvent
-	public static void registerTE(RegistryEvent.Register<TileEntityType<?>> event)
+	public static void onTileEntityRegistryEvent(RegistryEvent.Register<TileEntityType<?>> event)
 	{
 		event.getRegistry().register(MutationAcceleratorTileEntity.get());
 	}
@@ -74,5 +76,11 @@ public class ModBusEventHandler
 		event.getRegistry().register(EOTShapelessRecipe.SERIALIZER);
 		event.getRegistry().register(EOTShapedRecipe.SERIALIZER);
 		event.getRegistry().register(MutationAcceleratorRecipe.SERIALIZER);
+	}
+
+	@SubscribeEvent
+	public static void onContainerTypeRegistryEvent(final RegistryEvent.Register<ContainerType<?>> e)
+	{
+		e.getRegistry().register(MutationAcceleratorContainer.getContainerType());
 	}
 }

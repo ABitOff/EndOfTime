@@ -9,25 +9,31 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,15 +41,28 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class MutationAcceleratorBlock extends ContainerBlock
 {
 	private static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_0_15;
-	private static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
-	private static final MutationAcceleratorBlock INSTANCE =
-			(MutationAcceleratorBlock) new MutationAcceleratorBlock(Properties.create(Material.ROCK, MaterialColor.SAND)
-					.hardnessAndResistance(0.8f).lightValue(15).tickRandomly())
-							.setRegistryName(Constants.MUTATION_ACCELERATOR_RL);
+	private static final BooleanProperty LIT = BlockStateProperties.LIT;
+	private static final MutationAcceleratorBlock INSTANCE = (MutationAcceleratorBlock) new MutationAcceleratorBlock(
+			Properties.create(Material.ROCK, MaterialColor.SAND).hardnessAndResistance(0.8f))
+					.setRegistryName(Constants.MUTATION_ACCELERATOR_RL);
 
 	protected MutationAcceleratorBlock(Properties builder)
 	{
 		super(builder);
+		this.setDefaultState(
+				this.stateContainer.getBaseState().with(LEVEL, Integer.valueOf(0)).with(LIT, Boolean.valueOf(false)));
+	}
+
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+	{
+		// hack to make light pass through the sides, but not the bottom. also allows the sky light level at the same
+		// position as the block to be 15. otherwise it would be 14, making calculating LEVEL awkward.
+		return Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 15.99999D, 16.0D);
+	}
+
+	public boolean func_220074_n(BlockState state)
+	{
+		return true;
 	}
 
 	@Override
@@ -64,9 +83,17 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		return true;
 	}
 
-	public int getLightValue(BlockState state)
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
 	{
-		return state.get(LEVEL);
+		if (stack.hasDisplayName())
+		{
+			TileEntity tileentity = worldIn.getTileEntity(pos);
+			if (tileentity instanceof BeaconTileEntity)
+			{
+				((MutationAcceleratorTileEntity) tileentity).setCustomName(stack.getDisplayName());
+			}
+		}
+
 	}
 
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn,
@@ -83,15 +110,10 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		return true;
 	}
 
-	public BlockState getStateForPlacement(BlockItemUseContext context)
-	{
-		return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
-	}
-
 	@SuppressWarnings("deprecation")
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
+	public void onReplaced(BlockState oldState, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
 	{
-		if (state.getBlock() != newState.getBlock())
+		if (oldState.getBlock() != newState.getBlock())
 		{
 			TileEntity tileentity = worldIn.getTileEntity(pos);
 			if (tileentity instanceof MutationAcceleratorTileEntity)
@@ -99,7 +121,7 @@ public class MutationAcceleratorBlock extends ContainerBlock
 				InventoryHelper.dropInventoryItems(worldIn, pos, (MutationAcceleratorTileEntity) tileentity);
 				worldIn.updateComparatorOutputLevel(pos, this);
 			}
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onReplaced(oldState, worldIn, pos, newState, isMoving);
 		}
 	}
 
@@ -118,44 +140,81 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		return BlockRenderType.MODEL;
 	}
 
-	public BlockState rotate(BlockState state, Rotation rot)
+	public BlockRenderLayer getRenderLayer()
 	{
-		return state.with(FACING, rot.rotate(state.get(FACING)));
+		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
-	public BlockState mirror(BlockState state, Mirror mirrorIn)
+	public boolean isSolid(BlockState state)
 	{
-		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+		return true;
+	}
+
+	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
+	{
+		return false;
 	}
 
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
 	{
-		builder.add(FACING, LEVEL);
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
-	{
-		int level = stateIn.get(LEVEL);
-		if (stateIn.get(LEVEL) > 0)
-		{
-			worldIn.addParticle(ParticleTypes.MYCELIUM, pos.getX() + rand.nextDouble(), pos.getY() + 1.1,
-					pos.getZ() + rand.nextDouble(), 0.1 * level - 0.1, 0.1 * level - 0.1, 0.1 * level - 0.1);
-		}
-	}
-
-	public void tick(BlockState state, World worldIn, BlockPos pos, Random random)
-	{
-		
-	}
-
-	public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
-	{
-
+		builder.add(LEVEL, LIT);
 	}
 
 	public static MutationAcceleratorBlock get()
 	{
 		return INSTANCE;
+	}
+
+	public static void updateLevel(BlockState state, World world, BlockPos pos)
+	{
+		if (world.dimension.hasSkyLight())
+		{
+			int lightLevel = world.getLightFor(LightType.SKY, pos) - world.getSkylightSubtracted();
+			float sunAngle = world.getCelestialAngleRadians(1);
+			if (lightLevel > 0)
+			{
+				float f1 = sunAngle < Math.PI ? 0 : (float) Math.PI * 2;
+				sunAngle = sunAngle + (f1 - sunAngle) * 0.2f;
+				lightLevel = Math.round((float) lightLevel * MathHelper.cos(sunAngle));
+			}
+
+			lightLevel = MathHelper.clamp(lightLevel, 0, 15);
+			if (state.get(LEVEL) != lightLevel)
+			{
+				world.setBlockState(pos, state.with(LEVEL, lightLevel), 3);
+			}
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void onItemMutated(BlockState state, World world, BlockPos pos)
+	{
+		Random rand = world.getRandom();
+		int level = state.get(LEVEL);
+		if (level > 0)
+		{
+			float volume = MathHelper.lerp(level / 15f, 0.125f, 1.125f);
+			float pitch = MathHelper.lerp(level / 15f, 0.625f, 1.125f);
+			world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST_FAR,
+					SoundCategory.BLOCKS, volume, pitch, false);
+			int n = level == 1 ? 1 : 1 + rand.nextInt((int) Math.ceil(level / 3d));
+			for (int i = 0; i < n; i++)
+			{
+				double x = rand.nextDouble() / 2d + 0.25;
+				double z = rand.nextDouble() / 2d + 0.25;
+				world.addParticle(ParticleTypes.FIREWORK, pos.getX() + x, pos.getY() + 1.1, pos.getZ() + z,
+						(x - 0.5) / 10d, (level + 4d) / 200d, (z - 0.5) / 10d);
+			}
+		}
+	}
+
+	public static void flipState(BlockState state, World world, BlockPos pos)
+	{
+		world.setBlockState(pos, state.with(LIT, !state.get(LIT)), 3);
+	}
+
+	public static boolean isLit(BlockState state)
+	{
+		return state.get(LIT);
 	}
 }

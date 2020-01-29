@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.client.gui.screen.MutationAcceleratorScreen;
+import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -24,7 +27,9 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.jigsaw.SingleJigsawPiece;
 import net.minecraft.world.gen.feature.structure.DesertVillagePools;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -49,6 +54,12 @@ public class EndOfTime
 	private void setup(final FMLCommonSetupEvent event)
 	{
 		LOGGER.info("Loading {} version {}", Constants.MOD_NAME, Constants.MOD_VERSION);
+
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
+		{
+			ScreenManager.registerFactory(MutationAcceleratorContainer.getContainerType(),
+					MutationAcceleratorScreen::new);
+		});
 
 		DesertVillagePools.init();
 		JigsawPattern pattern = JigsawManager.field_214891_a.get(new ResourceLocation("village/desert/town_centers"));

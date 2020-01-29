@@ -1,80 +1,8 @@
 {
     "type": "%mod-id:%mutation-accelerator-serializer",
-
-    "plants": {
-        "minecraft:dead_bush": [],
-
-        "minecraft:cocoa_beans": ["seeds", "food-yielding"],
-        "minecraft:wheat_seeds": ["crops", "seeds", "food-yielding"],
-        "minecraft:beetroot_seeds": ["crops", "seeds", "food-yielding"],
-        "minecraft:melon_seeds": ["crops", "seeds", "food-yielding"],
-        "minecraft:pumpkin_seeds": ["crops", "seeds", "food-yielding"],
-        "minecraft:carrot": ["crops", "food-yielding"],
-        "minecraft:potato": ["crops", "food-yielding"],
-
-        "minecraft:bamboo": ["tall", "grasses"],
-        "minecraft:sugar_cane": ["tall", "grasses"],
-        "minecraft:cactus": ["tall", "spiny"],
-        "minecraft:kelp": ["tall", "water"],
-
-        "minecraft:grass": ["grasses"],
-        "minecraft:tall_grass": ["grasses"],
-        "minecraft:fern": ["grasses", "bushes"],
-        "minecraft:large_fern": ["grasses", "bushes"],
-        "minecraft:seagrass": ["grasses", "water"],
-
-        "minecraft:lily_pad": ["water"],
-
-        "minecraft:dandelion": ["flowers"],
-        "minecraft:poppy": ["flowers"],
-        "minecraft:blue_orchid": ["flowers"],
-        "minecraft:allium": ["flowers"],
-        "minecraft:azure_bluet": ["flowers"],
-        "minecraft:red_tulip": ["flowers", "tulip"],
-        "minecraft:orange_tulip": ["flowers", "tulip"],
-        "minecraft:white_tulip": ["flowers", "tulip"],
-        "minecraft:pink_tulip": ["flowers", "tulip"],
-        "minecraft:oxeye_daisy": ["flowers"],
-        "minecraft:cornflower": ["flowers"],
-        "minecraft:lily_of_the_valley": ["flowers"],
-        "minecraft:wither_rose": ["flowers"],
-        "minecraft:sunflower": ["flowers"],
-        "minecraft:lilac": ["flowers"],
-        "minecraft:rose_bush": ["flowers", "bushes"],
-        "minecraft:peony": ["flowers"],
-
-        "minecraft:oak_sapling": ["saplings", "bushes"],
-        "minecraft:spruce_sapling": ["saplings", "bushes"],
-        "minecraft:birch_sapling": ["saplings", "bushes"],
-        "minecraft:jungle_sapling": ["saplings", "bushes"],
-        "minecraft:acacia_sapling": ["saplings", "bushes"],
-        "minecraft:dark_oak_sapling": ["saplings", "bushes"],
-
-        "minecraft:sweet_berries": ["bushes", "food-yielding", "spiny"],
-
-        "minecraft:sea_pickle": ["plant-like", "water"],
-        "minecraft:brown_mushroom": ["plant-like", "fungal"],
-        "minecraft:red_mushroom": ["plant-like", "fungal"],
-        "minecraft:chorus_flower": ["plant-like", "alien"],
-        "minecraft:nether_wart": ["plant-like", "fungal", "alien"],
-
-        "minecraft:tube_coral": ["coral", "water"],
-        "minecraft:brain_coral": ["coral", "water"],
-        "minecraft:bubble_coral": ["coral", "water"],
-        "minecraft:fire_coral": ["coral", "water"],
-        "minecraft:horn_coral": ["coral", "water"],
-        "minecraft:tube_coral_fan": ["coral", "water"],
-        "minecraft:brain_coral_fan": ["coral", "water"],
-        "minecraft:bubble_coral_fan": ["coral", "water"],
-        "minecraft:fire_coral_fan": ["coral", "water"],
-        "minecraft:horn_coral_fan": ["coral", "water"]
-    },
     "mutation_tree": [{
             "specimen": "minecraft:wheat_seeds",
-            "groups": [{
-                "group": "crops",
-                "weight": 1.5
-            }, {
+            "groups": ["crops", {
                 "group": "seeds",
                 "weight": 1.5
             }, "food-yielding"],
@@ -179,13 +107,55 @@
         },
         {
             "specimen": "minecraft:carrot",
-            "groups": ["crops", "food-yielding"],
-            "results": []
+            "groups": ["crops", "food-yielding", "roots"],
+            "results": [{
+                "group": "roots",
+                "weight": 3.5
+            }, {
+                "group": "crops",
+                "weight": 2,
+                "merge": "max"
+            }, {
+                "group": "seeds",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:potato",
-            "groups": ["crops", "food-yielding"],
-            "results": []
+            "groups": ["crops", "food-yielding", "roots"],
+            "results": [{
+                "group": "roots",
+                "weight": 3.5
+            }, {
+                "group": "crops",
+                "weight": 2,
+                "merge": "max"
+            }, {
+                "group": "seeds",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.5
+            }, {
+                "group": "food-yielding",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         }, {
             "specimen": "minecraft:cocoa_beans",
             "groups": [{
