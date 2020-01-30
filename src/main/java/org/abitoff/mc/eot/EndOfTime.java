@@ -5,12 +5,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
-import org.abitoff.mc.eot.client.gui.screen.MutationAcceleratorScreen;
+import org.abitoff.mc.eot.client.gui.screen.inventory.MutationAcceleratorScreen;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
+import org.abitoff.mc.eot.world.WorldTypeEOT;
+import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +24,10 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
@@ -55,6 +61,18 @@ public class EndOfTime
 	{
 		LOGGER.info("Loading {} version {}", Constants.MOD_NAME, Constants.MOD_VERSION);
 
+		// Register WorldType
+		WorldTypeEOT.get();
+
+		final BiFunction<World, DimensionType, ? extends Dimension> oldFactory = DimensionType.OVERWORLD.factory;
+		DimensionType.OVERWORLD.factory = (w, t) ->
+		{
+			if (isModLoaded(w))
+				return new DimensionEOT(w, t);
+			else
+				return oldFactory.apply(w, t);
+		};
+
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{
 			ScreenManager.registerFactory(MutationAcceleratorContainer.getContainerType(),
@@ -86,5 +104,11 @@ public class EndOfTime
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean isModLoaded(World w)
+	{
+		boolean loaded = w.getWorldType().getName().equals(WorldTypeEOT.get().getName());
+		return loaded;
 	}
 }

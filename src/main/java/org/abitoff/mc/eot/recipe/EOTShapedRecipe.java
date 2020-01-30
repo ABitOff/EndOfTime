@@ -1,7 +1,7 @@
 package org.abitoff.mc.eot.recipe;
 
 import org.abitoff.mc.eot.Constants;
-import org.abitoff.mc.eot.world.WorldTypeEOT;
+import org.abitoff.mc.eot.EndOfTime;
 
 import com.google.gson.JsonObject;
 
@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.item.crafting.ShapedRecipe.Serializer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +47,7 @@ public final class EOTShapedRecipe extends ShapedRecipe
 	@Override
 	public boolean matches(CraftingInventory inv, World worldIn)
 	{
-		return super.matches(inv, worldIn) && worldIn.getWorldType() == WorldTypeEOT.get();
+		return super.matches(inv, worldIn) && EndOfTime.isModLoaded(worldIn);
 	}
 
 	@Override

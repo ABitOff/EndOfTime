@@ -1,4 +1,4 @@
-package org.abitoff.mc.eot.client.gui.screen;
+package org.abitoff.mc.eot.client.gui.screen.inventory;
 
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 

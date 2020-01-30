@@ -1,14 +1,16 @@
 package org.abitoff.mc.eot.event;
 
-import java.util.function.BiFunction;
-
 import javax.annotation.Nullable;
 
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.EndOfTime;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -21,12 +23,14 @@ import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.ServerProperties;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldInfo;
@@ -50,18 +54,8 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 public class ForgeBusEventHandler
 {
 	private static final Logger LOGGER = LogManager.getLogger(ForgeBusEventHandler.class);
-	private static final WorldType WORLD_TYPE_EOT = WorldTypeEOT.get();
 	private static final DimensionType OVERWORLD = DimensionType.OVERWORLD;
-
-	/**
-	 * DimensionType.OVERWORLD's default Dimension factory
-	 */
-	private static final BiFunction<World, DimensionType, ? extends Dimension> factoryDefault = OVERWORLD.factory;
-
-	/**
-	 * The Dimension factory which will override DimensionType.OVERWORLD's default
-	 */
-	private static final BiFunction<World, DimensionType, ? extends Dimension> factoryOverride = DimensionEOT::new;
+	private static final String DEFAULT_WORLD_TYPE_NAME = WorldType.DEFAULT.getName();
 
 	/**
 	 * When a server is about to start, we check its settings to see if its WorldType is WorldTypeEOT. If it is, we
@@ -72,22 +66,27 @@ public class ForgeBusEventHandler
 	{
 		// get this server's WorldType
 		MinecraftServer server = event.getServer();
-		WorldInfo info = server.getActiveAnvilConverter().getWorldInfo(server.getFolderName());
-		WorldType type = info == null ? null : info.getGenerator();
-
-		// if the server is loading a WorldTypeEOT, inject our factory
-		if (type == WORLD_TYPE_EOT)
+		if (server.isDedicatedServer())
 		{
-			LOGGER.info("Detected server configured with {} world type. Injecting custom overworld factory.",
-					WORLD_TYPE_EOT.getName());
-			OVERWORLD.factory = factoryOverride;
-		} else if (type == null)
-		{
-			LOGGER.warn("Server starting with indeterminate world type! Assuming world type is not {}. Ignoring.",
-					WORLD_TYPE_EOT.getName());
-		} else
-		{
-			LOGGER.info("Server starting without {} world type. Ignoring.", WORLD_TYPE_EOT.getName());
+			ServerProperties properties = ((DedicatedServer) server).getServerProperties();
+			JsonElement json = new Gson().fromJson(properties.generatorSettings, JsonElement.class);
+			LOGGER.info("Detected a dedicated server with the following generator-settings:\n{}", json);
+			if (json.isJsonObject())
+			{
+				if (JSONUtils.getBoolean(json.getAsJsonObject(), Constants.MOD_ID, false))
+				{
+					WorldType type = properties.worldType;
+					if (type == WorldType.DEFAULT)
+					{
+						LOGGER.info("Forcing server to tell client that this world's WorldType is {}.",
+								WorldTypeEOT.class.getSimpleName());
+						type.name = WorldTypeEOT.get().name;
+					} else
+						LOGGER.info("The server's current WorldType isn't {}. It's {}. Ignoring.",
+								DEFAULT_WORLD_TYPE_NAME, type != null ? type.getName() : "null");
+				} else
+					LOGGER.info("Ignoring");
+			}
 		}
 	}
 
@@ -97,24 +96,22 @@ public class ForgeBusEventHandler
 	@SubscribeEvent
 	public static void onServerStopped(FMLServerStoppedEvent event)
 	{
-		LOGGER.info("Server stopped. Restoring default overworld factory: {}. Was: {}.", factoryDefault,
-				OVERWORLD.factory);
-		OVERWORLD.factory = factoryDefault;
+		WorldType.DEFAULT.name = DEFAULT_WORLD_TYPE_NAME;
 	}
 
 	/**
 	 * World generation has finished, and a spawn point is being created. We want to place the player next to a village
 	 * and give them a crafting table, so we handle that here.
 	 */
+	@SuppressWarnings("resource")
 	@SubscribeEvent
 	public static void onCreateSpawnPosition(CreateSpawnPosition event)
 	{
 		IWorld world = event.getWorld();
 		assert world instanceof ServerWorld;
-		@SuppressWarnings("resource") // closing sw isn't our job.. seems like a java compiler bug.
 		ServerWorld sw = (ServerWorld) world;
 
-		if (sw.getWorldType() != WORLD_TYPE_EOT || sw.getDimension().getType() != OVERWORLD)
+		if (!EndOfTime.isModLoaded(sw) || sw.getDimension().getType() != OVERWORLD)
 			return;
 
 		LOGGER.info("Creating spawn position for {} world type.", sw.getWorldType().getName());
@@ -184,6 +181,8 @@ public class ForgeBusEventHandler
 	{
 		PlayerEntity p = event.getPlayer();
 
+		LOGGER.info("Player logged in. World is {}.", p.world.isRemote() ? "remote" : "local");
+
 		// give the player a crafting table only if the world's overworld dimension doesn't contain the nbt data for
 		// "eotFirstRun"
 		// (CompoundNBT.putBoolean(true) simply puts a ByteNBT(1). So we do the same.)
@@ -198,9 +197,11 @@ public class ForgeBusEventHandler
 	 * When the world loads for the first time, set the time to midnight.
 	 */
 	@SubscribeEvent
-	public static void onWorldEventLoad(WorldEvent.Load event)
+	public static void onWorldLoadEvent(WorldEvent.Load event)
 	{
 		World world = event.getWorld().getWorld();
+
+		LOGGER.info("World loaded. World is {}.", world.isRemote() ? "remote" : "local");
 
 		// onWorldEventLoad is called for all dimensions. we only need to run this for overworld, so we check for that.
 		if (world.dimension.getType() == OVERWORLD)
@@ -233,7 +234,7 @@ public class ForgeBusEventHandler
 	{
 		// get the world info and check if it's the End of Time world type
 		WorldInfo info = world.getWorldInfo();
-		if (info.getGenerator() != WORLD_TYPE_EOT)
+		if (!EndOfTime.isModLoaded(world))
 			return;
 
 		// get the overworld dimension nbt data

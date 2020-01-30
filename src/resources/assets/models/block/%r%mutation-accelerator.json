@@ -3,10 +3,10 @@
     "ambientocclusion": false,
     "textures": {
         "particle": "minecraft:block/sandstone",
-        "bottom": "%mod-id:block/bottom",
-        "mid": "%mod-id:block/mid",
-        "peg": "%mod-id:block/peg",
-        "glass": "%mod-id:block/glass"
+        "bottom": "%mod-id:block/mutation_accelerator/bottom",
+        "mid": "%mod-id:block/mutation_accelerator/mid",
+        "peg": "%mod-id:block/mutation_accelerator/peg",
+        "glass": "%mod-id:block/mutation_accelerator/glass"
     },
     "elements": [{
             "name": "bottom",

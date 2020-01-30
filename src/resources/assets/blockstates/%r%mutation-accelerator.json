@@ -1,7 +1,7 @@
 {
     "variants": {
         "": {
-            "model": "%mod-id:block/mutation_accelerator",
+            "model": "%mod-id:block/%mutation-accelerator",
             "uvlock": true
         }
     }
