@@ -16,6 +16,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.FleeSunGoal;
 import net.minecraft.entity.ai.goal.RestrictSunGoal;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -181,15 +182,19 @@ public class ForgeBusEventHandler
 	{
 		PlayerEntity p = event.getPlayer();
 
-		LOGGER.info("Player logged in. World is {}.", p.world.isRemote() ? "remote" : "local");
-
 		// give the player a crafting table only if the world's overworld dimension doesn't contain the nbt data for
 		// "eotFirstRun"
 		// (CompoundNBT.putBoolean(true) simply puts a ByteNBT(1). So we do the same.)
 		doIfWorldDataNotPresent(p.world, () ->
 		{
 			// give the player a crafting table
-			p.addItemStackToInventory(new ItemStack(Blocks.CRAFTING_TABLE));
+			ItemStack stack = new ItemStack(Blocks.CRAFTING_TABLE);
+			ItemEntity entity = p.dropItem(stack, false);
+			if (entity != null)
+			{
+				entity.setNoPickupDelay();
+				entity.setOwnerId(p.getUniqueID());
+			}
 		}, "eotFirstRun", new ByteNBT((byte) 1));
 	}
 
@@ -201,14 +206,12 @@ public class ForgeBusEventHandler
 	{
 		World world = event.getWorld().getWorld();
 
-		LOGGER.info("World loaded. World is {}.", world.isRemote() ? "remote" : "local");
-
 		// onWorldEventLoad is called for all dimensions. we only need to run this for overworld, so we check for that.
 		if (world.dimension.getType() == OVERWORLD)
 			doIfWorldDataNotPresent(world, () ->
 			{
 				// set the world time
-				world.getWorldInfo().setDayTime(DimensionEOT.MIDNIGHT_OFFSET);
+				world.setDayTime(DimensionEOT.MIDNIGHT_OFFSET);
 			}, "eotFirstRun", null);
 	}
 
