@@ -1,6 +1,8 @@
 package org.abitoff.mc.eot.inventory.container;
 
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.tileentity.MutationAcceleratorTileEntity;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -9,6 +11,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class MutationAcceleratorContainer extends Container
 {
@@ -35,9 +38,10 @@ public class MutationAcceleratorContainer extends Container
 	{
 		super(CONTAINER_TYPE, id);
 		this.mutationAcceleratorInv = iInv;
-		this.addSlot(new MASlot(iInv, 0, 56, 17));
-		this.addSlot(new MASlot(iInv, 1, 56, 53));
-		this.addSlot(new MASlot(iInv, 2, 116, 35));
+		World world = playerInv.player.world;
+		this.addSlot(new MASlot(iInv, 0, 56, 17, 64, world));
+		this.addSlot(new MASlot(iInv, 1, 56, 53, 1, world));
+		this.addSlot(new MASlot(iInv, 2, 116, 35, 1, world));
 
 		int invRows = 3;
 		int invCols = 9;
@@ -46,58 +50,46 @@ public class MutationAcceleratorContainer extends Container
 		int hOffset = 8;
 		int yOffset = 84;
 		for (int y = 0; y < invRows; ++y)
-		{
 			for (int x = 0; x < invCols; ++x)
-			{
 				this.addSlot(
 						new Slot(playerInv, x + (y + 1) * invCols, hOffset + x * slotWidth, yOffset + y * slotHeight));
-			}
-		}
 
 		yOffset = 142;
 		for (int x = 0; x < invCols; ++x)
-		{
 			this.addSlot(new Slot(playerInv, x, hOffset + x * slotWidth, yOffset));
-		}
 	}
 
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index)
 	{
-		Slot slot = this.inventorySlots.get(index);
+		Slot slot = inventorySlots.get(index);
 		if (slot == null || !slot.getHasStack())
 			return ItemStack.EMPTY;
 
 		ItemStack stack = slot.getStack();
 		ItemStack old = stack.copy();
-		if (index < CONTAINER_SIZE)
+		POST_MERGE: if (index < CONTAINER_SIZE)
 		{
 			if (!mergeIntoInvAndHotbar(stack))
 				return ItemStack.EMPTY;
 		} else
 		{
-			boolean merged = false;
 			for (int i = 0; i < CONTAINER_SIZE; i++)
 			{
-				if (mutationAcceleratorInv.isItemValidForSlot(i, stack))
+				if (inventorySlots.get(i).isItemValid(stack))
 				{
-					int count = stack.getCount();
 					if (!mergeItemStack(stack, i, i + 1, false))
 						return ItemStack.EMPTY;
-					merged = stack.getCount() != count;
-					break;
+					break POST_MERGE;
 				}
 			}
-			if (!merged)
+			if (index >= CONTAINER_SIZE && index < HOTBAR_START)
 			{
-				if (index >= CONTAINER_SIZE && index < HOTBAR_START)
-				{
-					if (!mergeFromInvToHotbar(stack))
-						return ItemStack.EMPTY;
-				} else if (index >= HOTBAR_START && index < TOTAL_SIZE)
-				{
-					if (!mergeFromHotbarToInv(stack))
-						return ItemStack.EMPTY;
-				}
+				if (!mergeFromInvToHotbar(stack))
+					return ItemStack.EMPTY;
+			} else if (index >= HOTBAR_START && index < TOTAL_SIZE)
+			{
+				if (!mergeFromHotbarToInv(stack))
+					return ItemStack.EMPTY;
 			}
 		}
 
@@ -151,14 +143,27 @@ public class MutationAcceleratorContainer extends Container
 
 	private static final class MASlot extends Slot
 	{
-		public MASlot(IInventory inv, int index, int x, int y)
+		private final int slotLimit;
+		private final World world;
+
+		public MASlot(IInventory inv, int index, int x, int y, int slotLimit, World world)
 		{
 			super(inv, index, x, y);
+			this.slotLimit = slotLimit;
+			this.world = world;
 		}
 
 		public boolean isItemValid(ItemStack stack)
 		{
-			return inventory.isItemValidForSlot(getSlotIndex(), stack);
+			System.out.println("Is it valid to put a " + stack.getItem() + " in slot " + getSlotIndex() + "?");
+			boolean b = MutationAcceleratorTileEntity.isItemValidForSlotStatic(getSlotIndex(), stack, world);
+			System.out.println(MutationAcceleratorTileEntity.class.getSimpleName() + " says " + (b ? "Yes." : "No."));
+			return b;
+		}
+
+		public int getSlotStackLimit()
+		{
+			return this.slotLimit;
 		}
 	}
 }

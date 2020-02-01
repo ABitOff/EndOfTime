@@ -13,27 +13,31 @@ import net.minecraftforge.fml.network.NetworkEvent;
 public class SMutationAcceleratorMutationPacket implements EOTPacket
 {
 	private BlockPos pos;
+	private int level;
 
 	public SMutationAcceleratorMutationPacket()
 	{
-		this(null);
+		this(null, 0);
 	}
 
-	public SMutationAcceleratorMutationPacket(BlockPos pos)
+	public SMutationAcceleratorMutationPacket(BlockPos pos, int level)
 	{
 		this.pos = pos;
+		this.level = level;
 	}
 
 	@Override
 	public void decode(PacketBuffer buf)
 	{
 		this.pos = buf.readBlockPos();
+		this.level = buf.readInt();
 	}
 
 	@Override
 	public void encode(PacketBuffer buf)
 	{
 		buf.writeBlockPos(pos);
+		buf.writeInt(level);
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class SMutationAcceleratorMutationPacket implements EOTPacket
 			ctx.enqueueWork(() ->
 			{
 				ClientWorld w = Minecraft.getInstance().world;
-				MutationAcceleratorBlock.onItemMutated(w, pos);
+				MutationAcceleratorBlock.onItemMutated(w, pos, level);
 			});
 		}
 		ctx.setPacketHandled(true);

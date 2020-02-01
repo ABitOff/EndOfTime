@@ -54,7 +54,7 @@ public class DimensionEOT extends OverworldDimension
 
 	private static double sgn(double x)
 	{
-		return x < 0 ? -1 : 1;
+		return x > 0 ? 1 : -1;
 	}
 
 	@Override

@@ -18,10 +18,6 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -41,8 +37,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MutationAcceleratorBlock extends ContainerBlock
 {
-	private static final IntegerProperty LEVEL = BlockStateProperties.LEVEL_0_15;
-	private static final BooleanProperty LIT = BlockStateProperties.LIT;
 	private static final MutationAcceleratorBlock INSTANCE = (MutationAcceleratorBlock) new MutationAcceleratorBlock(
 			Properties.create(Material.ROCK, MaterialColor.SAND).hardnessAndResistance(0.8f))
 					.setRegistryName(Constants.MUTATION_ACCELERATOR_RL);
@@ -50,8 +44,6 @@ public class MutationAcceleratorBlock extends ContainerBlock
 	protected MutationAcceleratorBlock(Properties builder)
 	{
 		super(builder);
-		this.setDefaultState(
-				this.stateContainer.getBaseState().with(LEVEL, Integer.valueOf(0)).with(LIT, Boolean.valueOf(false)));
 	}
 
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
@@ -156,11 +148,6 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		return false;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
-	{
-		builder.add(LEVEL, LIT);
-	}
-
 	public static MutationAcceleratorBlock get()
 	{
 		return INSTANCE;
@@ -171,6 +158,7 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		if (world.dimension.hasSkyLight())
 		{
 			int lightLevel = world.getLightFor(LightType.SKY, pos) - world.getSkylightSubtracted();
+			System.out.println(lightLevel);
 			float sunAngle = world.getCelestialAngleRadians(1);
 			if (lightLevel > 0)
 			{
@@ -180,15 +168,11 @@ public class MutationAcceleratorBlock extends ContainerBlock
 			}
 
 			lightLevel = MathHelper.clamp(lightLevel, 0, 15);
-			if (state.get(LEVEL) != lightLevel)
-			{
-				world.setBlockState(pos, state.with(LEVEL, lightLevel), 3);
-			}
 		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void onItemMutated(ClientWorld world, BlockPos pos)
+	public static void onItemMutated(ClientWorld world, BlockPos pos, int level)
 	{
 		if (world.getChunk(pos.getX() >> 4, pos.getZ() >> 4, null, false) == null)
 			return;
@@ -196,7 +180,6 @@ public class MutationAcceleratorBlock extends ContainerBlock
 		if (state.getBlock() != INSTANCE)
 			return;
 		Random rand = world.getRandom();
-		int level = state.get(LEVEL);
 		if (level > 0)
 		{
 			float volume = MathHelper.lerp(level / 15f, 0.125f, 1.125f);
@@ -212,15 +195,5 @@ public class MutationAcceleratorBlock extends ContainerBlock
 						(x - 0.5) / 10d, (level + 4d) / 200d, (z - 0.5) / 10d);
 			}
 		}
-	}
-
-	public static void flipState(BlockState state, World world, BlockPos pos)
-	{
-		world.setBlockState(pos, state.with(LIT, !state.get(LIT)), 3);
-	}
-
-	public static boolean isLit(BlockState state)
-	{
-		return state.get(LIT);
 	}
 }
