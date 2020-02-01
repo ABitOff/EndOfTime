@@ -20,4 +20,5 @@ public class Constants
 	public static final String MUTATION_ACCELERATOR_NAME_TTC = "container.%mod-id.%mutation-accelerator";
 	public static final String MUTATION_ACCELERATOR_CONTAINER = "%mod-id.%mutation-accelerator-container";
 	public static final String END_OF_TIME_WORLD_TYPE_NAME = "%mod-id.%end-of-time-name";
+	public static final String NETWORK_CHANNEL_RL = "%mod-id:%network-channel";
 }

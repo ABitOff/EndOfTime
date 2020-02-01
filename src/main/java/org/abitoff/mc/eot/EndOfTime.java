@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.client.gui.screen.inventory.MutationAcceleratorScreen;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
+import org.abitoff.mc.eot.network.EOTNetworkChannel;
+import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +33,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -81,6 +84,8 @@ public class EndOfTime
 		JigsawManager.field_214891_a
 				.register(new JigsawPattern(new ResourceLocation(Constants.MOD_ID, "village/eot/town_centers"),
 						new ResourceLocation("empty"), pairList, JigsawPattern.PlacementBehaviour.RIGID));
+
+		EOTNetworkChannel.register(SMutationAcceleratorMutationPacket.class, SMutationAcceleratorMutationPacket::new);
 	}
 
 	public static boolean isModLoaded(World w)

@@ -39,9 +39,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 	public static final MutationAcceleratorRecipeSerializer SERIALIZER =
 			(MutationAcceleratorRecipeSerializer) new MutationAcceleratorRecipeSerializer()
 					.setRegistryName(Constants.MUTATION_ACCELERATOR_SERIALIZER_RL);
-	private final Map<Item, List<Pair<Item, Float>>> mutationTree;
+	private final ImmutableMap<Item, List<Pair<Item, Float>>> mutationTree;
 
-	public MutationAcceleratorRecipe(ResourceLocation idIn, Map<Item, List<Pair<Item, Float>>> mutationTree)
+	public MutationAcceleratorRecipe(ResourceLocation idIn, ImmutableMap<Item, List<Pair<Item, Float>>> mutationTree)
 	{
 		super(idIn);
 		this.mutationTree = mutationTree;
@@ -86,6 +86,11 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 	public IRecipeSerializer<?> getSerializer()
 	{
 		return SERIALIZER;
+	}
+
+	public ImmutableMap<Item, List<Pair<Item, Float>>> getTree()
+	{
+		return this.mutationTree;
 	}
 
 	private static final class MutationAcceleratorRecipeSerializer
@@ -175,8 +180,8 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
-//					LOGGER.info("{}.{} = {}({})", specimen.getRegistryName(),
-//							group == null ? item.getRegistryName() : group, mergeType.name(), weight);
+					// LOGGER.info("{}.{} = {}({})", specimen.getRegistryName(),
+					// group == null ? item.getRegistryName() : group, mergeType.name(), weight);
 					results.add(new Result(group, item, weight, mergeType));
 				}
 
@@ -228,9 +233,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 									actualValue = newValue;
 									break;
 							}
-//							LOGGER.info("for {}, merging {} and {} using {}. old = {}. new = {}.",
-//									p.getFirst().getRegistryName(), oldValue, newValue, r.merge.name(), previous[0],
-//									actualValue);
+							// LOGGER.info("for {}, merging {} and {} using {}. old = {}. new = {}.",
+							// p.getFirst().getRegistryName(), oldValue, newValue, r.merge.name(), previous[0],
+							// actualValue);
 							return actualValue;
 						});
 						// add the new weight to the sum, subtracting the old weight if necessary.
@@ -247,26 +252,26 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 				finalTree.put(specimen, finalResuls);
 			}
 
-//			LOGGER.info("LOGGING MUTATION TREE");
-//			for (Entry<Item, List<Pair<Item, Float>>> e: finalTree.entrySet())
-//			{
-//				if (e.getValue().size() == 0)
-//					continue;
-//				LOGGER.info("{}:", e.getKey().getRegistryName());
-//				e.getValue().sort((a, b) ->
-//				{
-//					int compare = Float.compare(b.getSecond(), a.getSecond());
-//					if (compare != 0)
-//						return compare;
-//					return a.getFirst().getRegistryName().toString()
-//							.compareToIgnoreCase(b.getFirst().getRegistryName().toString());
-//				});
-//				for (Pair<Item, Float> p: e.getValue())
-//				{
-//					LOGGER.info("\t{}: {}%", p.getFirst().getRegistryName(),
-//							(float) Math.round(p.getSecond() * 100000f) / 1000f);
-//				}
-//			}
+			// LOGGER.info("LOGGING MUTATION TREE");
+			// for (Entry<Item, List<Pair<Item, Float>>> e: finalTree.entrySet())
+			// {
+			// if (e.getValue().size() == 0)
+			// continue;
+			// LOGGER.info("{}:", e.getKey().getRegistryName());
+			// e.getValue().sort((a, b) ->
+			// {
+			// int compare = Float.compare(b.getSecond(), a.getSecond());
+			// if (compare != 0)
+			// return compare;
+			// return a.getFirst().getRegistryName().toString()
+			// .compareToIgnoreCase(b.getFirst().getRegistryName().toString());
+			// });
+			// for (Pair<Item, Float> p: e.getValue())
+			// {
+			// LOGGER.info("\t{}: {}%", p.getFirst().getRegistryName(),
+			// (float) Math.round(p.getSecond() * 100000f) / 1000f);
+			// }
+			// }
 
 			return new MutationAcceleratorRecipe(recipeId, ImmutableMap.copyOf(finalTree));
 		}

@@ -1,9 +1,17 @@
 package org.abitoff.mc.eot.tileentity;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
+import org.abitoff.mc.eot.network.EOTNetworkChannel;
+import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
+import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -11,7 +19,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableTileEntity;
@@ -19,6 +29,8 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class MutationAcceleratorTileEntity extends LockableTileEntity implements ITickableTileEntity
 {
@@ -28,9 +40,8 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 					.create(MutationAcceleratorTileEntity::new, MutationAcceleratorBlock.get()).build(null)
 					.setRegistryName(Constants.MUTATION_ACCELERATOR_TILE_ENTITY_RL);
 
-	// private Set<MutationAcceleratorRecipe> mutationTrees;
+	private Set<MutationAcceleratorRecipe> mutationTrees = new HashSet<MutationAcceleratorRecipe>();
 	private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
-	private boolean lit = false;
 
 	public MutationAcceleratorTileEntity()
 	{
@@ -92,6 +103,11 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	public void setInventorySlotContents(int index, ItemStack stack)
 	{
 		this.items.set(index, stack);
+		int count = stack.getCount();
+		if (index == 0 && count > getInventoryStackLimit())
+			count = getInventoryStackLimit();
+		else if (count > 1)
+			count = 1;
 		if (stack.getCount() > getInventoryStackLimit())
 			stack.setCount(getInventoryStackLimit());
 	}
@@ -107,10 +123,17 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 
 	public boolean isItemValidForSlot(int index, ItemStack stack)
 	{
-
 		if (index == 0)
 		{
-			return true;
+			if (populateMergeTreeIfNeeded())
+			{
+				final Item item = stack.getItem();
+				return mutationTrees.stream().anyMatch(r ->
+				{
+					return r.getTree().containsKey(item);
+				});
+			}
+			return false;
 		} else if (index == 1)
 		{
 			return stack.getItem() == MutativeCerateItem.get();
@@ -118,6 +141,19 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 		{
 			return false;
 		}
+	}
+
+	private boolean populateMergeTreeIfNeeded()
+	{
+		if (mutationTrees != null)
+			return true;
+		if (world == null || world.getRecipeManager() == null)
+			return false;
+
+		Collection<IRecipe<?>> recipes = world.getRecipeManager().getRecipes();
+		mutationTrees = recipes.stream().filter(r -> r instanceof MutationAcceleratorRecipe)
+				.map(r -> (MutationAcceleratorRecipe) r).collect(Collectors.toSet());
+		return true;
 	}
 
 	@Override
@@ -165,30 +201,22 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 				BlockState blockstate = this.getBlockState();
 				Block block = blockstate.getBlock();
 				if (block == MutationAcceleratorBlock.get())
+				{
 					MutationAcceleratorBlock.flipState(blockstate, world, pos);
+					onItemMutated();
+				}
 				markDirty();
 			}
-		} else
-		{
-			boolean newLit = MutationAcceleratorBlock.isLit(getBlockState());
-			if (!newLit && lit)
-			{
-				onItemMutated();
-			}
-			lit = newLit;
 		}
 	}
 
-	public void onItemMutated()
+	private void onItemMutated()
 	{
-		if (world != null && world.isRemote)
+		if (world != null && !world.isRemote)
 		{
-			BlockState blockstate = this.getBlockState();
-			Block block = blockstate.getBlock();
-			if (block == MutationAcceleratorBlock.get())
-			{
-				MutationAcceleratorBlock.onItemMutated(blockstate, world, pos);
-			}
+			Chunk c = world.getChunkAt(pos);
+			EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
+					new SMutationAcceleratorMutationPacket(pos));
 		}
 	}
 }

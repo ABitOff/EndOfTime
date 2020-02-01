@@ -30,6 +30,7 @@
         "mutation-accelerator": "mutation_accelerator",
         "shapeless-recipe-serializer": "crafting_special_eot_shapeless",
         "shaped-recipe-serializer": "crafting_special_eot_shaped",
-        "end-of-time-name": "end_of_time"
+        "end-of-time-name": "end_of_time",
+        "network-channel": "end_of_time_channel"
     }
 }

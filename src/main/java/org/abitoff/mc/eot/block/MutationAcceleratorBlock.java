@@ -11,6 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
@@ -187,8 +188,13 @@ public class MutationAcceleratorBlock extends ContainerBlock
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void onItemMutated(BlockState state, World world, BlockPos pos)
+	public static void onItemMutated(ClientWorld world, BlockPos pos)
 	{
+		if (world.getChunk(pos.getX() >> 4, pos.getZ() >> 4, null, false) == null)
+			return;
+		BlockState state = world.getBlockState(pos);
+		if (state.getBlock() != INSTANCE)
+			return;
 		Random rand = world.getRandom();
 		int level = state.get(LEVEL);
 		if (level > 0)
@@ -200,9 +206,9 @@ public class MutationAcceleratorBlock extends ContainerBlock
 			int n = level == 1 ? 1 : 1 + rand.nextInt((int) Math.ceil(level / 3d));
 			for (int i = 0; i < n; i++)
 			{
-				double x = rand.nextDouble() / 2d + 0.25;
-				double z = rand.nextDouble() / 2d + 0.25;
-				world.addParticle(ParticleTypes.FIREWORK, pos.getX() + x, pos.getY() + 1.1, pos.getZ() + z,
+				double x = rand.nextDouble() / 4d + 0.375;
+				double z = rand.nextDouble() / 4d + 0.375;
+				world.addParticle(ParticleTypes.FIREWORK, pos.getX() + x, pos.getY() + 0.5, pos.getZ() + z,
 						(x - 0.5) / 10d, (level + 4d) / 200d, (z - 0.5) / 10d);
 			}
 		}
