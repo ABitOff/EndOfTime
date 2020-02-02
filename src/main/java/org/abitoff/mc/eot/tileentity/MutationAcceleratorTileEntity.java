@@ -15,6 +15,7 @@ import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.network.EOTNetworkChannel;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
+import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorSpecimenChangePacket;
 import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 
 import com.google.common.collect.ImmutableSet;
@@ -63,6 +64,7 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	private static final int[] DOWN_SLOTS = new int[] {2};
 
 	private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
+	private Item specimen = null;
 
 	public MutationAcceleratorTileEntity()
 	{
@@ -284,6 +286,13 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 				// our inventory chaged, so mark dirty
 				markDirty();
 			}
+
+			Item tempSpecimen;
+			if ((tempSpecimen = items.get(0).getItem()) != specimen)
+			{
+				specimen = tempSpecimen;
+				onSpecimenChanged();
+			}
 		}
 	}
 
@@ -299,6 +308,24 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 		Chunk c = world.getChunkAt(pos);
 		EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
 				new SMutationAcceleratorMutationPacket(pos, level));
+	}
+
+	private void onSpecimenChanged()
+	{
+		assert !world.isRemote;
+		Chunk c = world.getChunkAt(pos);
+		EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
+				new SMutationAcceleratorSpecimenChangePacket(pos, specimen));
+	}
+
+	public void onSpecimenChangedPacketReceived(Item item)
+	{
+		this.specimen = item;
+	}
+
+	public Item getSpecimen()
+	{
+		return this.specimen;
 	}
 
 	@Override
