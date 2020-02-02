@@ -40,7 +40,7 @@ public class MutationAcceleratorContainer extends Container
 		this.mutationAcceleratorInv = iInv;
 		World world = playerInv.player.world;
 		this.addSlot(new MASlot(iInv, 0, 56, 17, 64, world));
-		this.addSlot(new MASlot(iInv, 1, 56, 53, 1, world));
+		this.addSlot(new MASlot(iInv, 1, 56, 53, 64, world));
 		this.addSlot(new MASlot(iInv, 2, 116, 35, 1, world));
 
 		int invRows = 3;
@@ -82,7 +82,7 @@ public class MutationAcceleratorContainer extends Container
 					break POST_MERGE;
 				}
 			}
-			if (index >= CONTAINER_SIZE && index < HOTBAR_START)
+			if (index < HOTBAR_START)
 			{
 				if (!mergeFromInvToHotbar(stack))
 					return ItemStack.EMPTY;

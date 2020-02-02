@@ -59,9 +59,9 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 		return null;
 	}
 
-	public ItemStack getCraftingResult(CraftingInventory inv, Random rand)
+	public ItemStack getCraftingResult(Item item, Random rand)
 	{
-		List<Pair<Item, Float>> results = mutationTree.get(inv.getStackInSlot(0).getItem());
+		List<Pair<Item, Float>> results = mutationTree.get(item);
 		if (results == null)
 			return null;
 		float f = rand.nextFloat();

@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
@@ -16,17 +19,21 @@ import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -34,9 +41,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.items.CapabilityItemHandler;
 
-public class MutationAcceleratorTileEntity extends LockableTileEntity implements ITickableTileEntity
+public class MutationAcceleratorTileEntity extends LockableTileEntity implements ITickableTileEntity, ISidedInventory
 {
 	@SuppressWarnings("unchecked")
 	private static final TileEntityType<MutationAcceleratorTileEntity> TYPE_INSTANCE =
@@ -47,6 +57,7 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	private static final Map<World, ImmutableSet<MutationAcceleratorRecipe>> MUTATION_TREES =
 			new ConcurrentHashMap<World, ImmutableSet<MutationAcceleratorRecipe>>();
 	private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
+	private boolean active = false;
 
 	public MutationAcceleratorTileEntity()
 	{
@@ -105,11 +116,6 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	public void setInventorySlotContents(int index, ItemStack stack)
 	{
 		this.items.set(index, stack);
-		int count = stack.getCount();
-		if (index == 0 && count > getInventoryStackLimit())
-			count = getInventoryStackLimit();
-		else if (count > 1)
-			count = 1;
 		if (stack.getCount() > getInventoryStackLimit())
 			stack.setCount(getInventoryStackLimit());
 	}
@@ -132,11 +138,11 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	{
 		if (index == 0)
 		{
-			Set<MutationAcceleratorRecipe> tree;
-			if ((tree = populateMergeTreeIfNeeded(world)) != null)
+			Set<MutationAcceleratorRecipe> trees;
+			if ((trees = populateMergeTreeIfNeeded(world)) != null)
 			{
 				final Item item = stack.getItem();
-				return tree.stream().anyMatch(r ->
+				return trees.stream().anyMatch(r ->
 				{
 					return r.getTree().containsKey(item);
 				});
@@ -217,20 +223,85 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 
 				level = MathHelper.clamp(level, 0, 15);
 			}
-			if (world.getGameTime() % 50 == 0)
+
+			this.active = level > 0 && !items.get(0).isEmpty() && !items.get(1).isEmpty() && items.get(2).isEmpty();
+
+			BlockState state = getBlockState();
+			if (MutationAcceleratorBlock.isActive(state) != active)
+				MutationAcceleratorBlock.setActive(world, pos, state, active);
+
+			if (active && world.getRandom().nextInt(1200) == 0)
 			{
+				ItemStack specimenStack = items.get(0);
+				ItemStack cerateStack = items.get(1);
+				Set<MutationAcceleratorRecipe> trees;
+				ItemStack result = Items.DEAD_BUSH.getDefaultInstance();
+				if (world.rand.nextDouble() < 0.5 && (trees = populateMergeTreeIfNeeded(world)) != null)
+				{
+					result = null;
+					Item specimen = specimenStack.getItem();
+					for (MutationAcceleratorRecipe mar: trees)
+						if ((result = mar.getCraftingResult(specimen, world.rand)) != null)
+							break;
+				}
+				if (result == null)
+					result = ItemStack.EMPTY;
+				specimenStack = decrementItemStack(specimenStack);
+				cerateStack = decrementItemStack(cerateStack);
+				setInventorySlotContents(0, specimenStack);
+				setInventorySlotContents(1, cerateStack);
+				setInventorySlotContents(2, result);
 				onItemMutated(level);
+				markDirty();
 			}
 		}
 	}
 
+	private static ItemStack decrementItemStack(ItemStack stack)
+	{
+		stack.setCount(stack.getCount() - 1);
+		return stack.isEmpty() ? ItemStack.EMPTY : stack;
+	}
+
 	private void onItemMutated(int level)
 	{
-		if (world != null && !world.isRemote)
+		assert !world.isRemote;
+		Chunk c = world.getChunkAt(pos);
+		EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
+				new SMutationAcceleratorMutationPacket(pos, level));
+	}
+
+	@Override
+	public int[] getSlotsForFace(Direction face)
+	{
+		switch (face)
 		{
-			Chunk c = world.getChunkAt(pos);
-			EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
-					new SMutationAcceleratorMutationPacket(pos, level));
+			case UP:
+				return new int[] {0};
+			case DOWN:
+				return new int[] {2};
+			default:
+				return new int[] {1};
 		}
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack stack, Direction face)
+	{
+		return isItemValidForSlot(index, stack);
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, Direction face)
+	{
+		return index == 2;
+	}
+
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+	{
+		if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			return LazyOptional.empty();
+		return super.getCapability(cap, side);
 	}
 }
