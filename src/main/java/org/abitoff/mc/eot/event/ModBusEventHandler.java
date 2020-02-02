@@ -9,6 +9,7 @@ import org.abitoff.mc.eot.EndOfTime;
 import org.abitoff.mc.eot.block.MutatedCropBlock;
 import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.client.gui.screen.inventory.MutationAcceleratorScreen;
+import org.abitoff.mc.eot.client.renderer.tileentity.MutationAcceleratorTileEntityRenderer;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutatedCropItem;
 import org.abitoff.mc.eot.items.MutationAcceleratorItem;
@@ -53,6 +54,7 @@ import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -73,11 +75,15 @@ public class ModBusEventHandler
 		// Register WorldType
 		WorldTypeEOT.get();
 
-		// Register screens
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
 		{
+			// Register screens
 			ScreenManager.registerFactory(MutationAcceleratorContainer.getContainerType(),
 					MutationAcceleratorScreen::new);
+
+			// Register tile entity renderers
+			ClientRegistry.bindTileEntitySpecialRenderer(MutationAcceleratorTileEntity.class,
+					new MutationAcceleratorTileEntityRenderer());
 		});
 
 		// Replace the overworld dimension factory with one that supplies a DimensionEOT when the mod is loaded and
