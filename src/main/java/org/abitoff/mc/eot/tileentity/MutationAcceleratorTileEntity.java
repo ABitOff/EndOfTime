@@ -56,8 +56,13 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 
 	private static final Map<World, ImmutableSet<MutationAcceleratorRecipe>> MUTATION_TREES =
 			new ConcurrentHashMap<World, ImmutableSet<MutationAcceleratorRecipe>>();
+
+	// hoppers attached to one of the side faces or the top face have access to the two input slots
+	private static final int[] TOP_AND_SIDE_SLOTS = new int[] {0, 1};
+	// hoppers attached to the bottom face have access to the output slot
+	private static final int[] DOWN_SLOTS = new int[] {2};
+
 	private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
-	private boolean active = false;
 
 	public MutationAcceleratorTileEntity()
 	{
@@ -138,40 +143,51 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	{
 		if (index == 0)
 		{
+			// if there's a recipe which takes this item as an ingredient, then the item is valid for the slot.
+
 			Set<MutationAcceleratorRecipe> trees;
-			if ((trees = populateMergeTreeIfNeeded(world)) != null)
+			// get or populate the tree for this world
+			if ((trees = populateMutationTreeIfNeeded(world)) != null)
 			{
 				final Item item = stack.getItem();
+				// iterate through the recipes for this world. if any take item as an ingredient, return true
 				return trees.stream().anyMatch(r ->
 				{
 					return r.getTree().containsKey(item);
 				});
 			}
+			// there are no trees for this world. return false?
 			return false;
 		} else if (index == 1)
 		{
+			// only mutative cerate is allowed in slot 1
 			return stack.getItem() == MutativeCerateItem.get();
 		} else
 		{
+			// nothing is allowed to be placed in the output slot, unless placed there directly by the tile entity.
 			return false;
 		}
 	}
 
-	private static ImmutableSet<MutationAcceleratorRecipe> populateMergeTreeIfNeeded(World world)
+	private static ImmutableSet<MutationAcceleratorRecipe> populateMutationTreeIfNeeded(World world)
 	{
 		if (world == null)
 			return null;
 
 		ImmutableSet<MutationAcceleratorRecipe> tree;
+		// if we already have a recipe for this world, return it.
 		if ((tree = MUTATION_TREES.get(world)) != null)
 			return tree;
 
 		if (world.getRecipeManager() == null)
 			return null;
 
+		// get all the recipes registered for this world
 		Collection<IRecipe<?>> recipes = world.getRecipeManager().getRecipes();
+		// filter only the MutationAcceleratorRecipes, cast them to MutationAcceleratorRecipe, and collect them in a set
 		tree = ImmutableSet.copyOf(recipes.stream().filter(r -> r instanceof MutationAcceleratorRecipe)
 				.map(r -> (MutationAcceleratorRecipe) r).collect(Collectors.toSet()));
+		// store that tree, then return it.
 		MUTATION_TREES.put(world, tree);
 		return tree;
 	}
@@ -209,6 +225,7 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 			return;
 		if (!world.isRemote)
 		{
+			// calculate the sunlight level. this is the same code as in DaylightDetector.
 			int level = 0;
 			if (world.dimension.hasSkyLight())
 			{
@@ -224,34 +241,47 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 				level = MathHelper.clamp(level, 0, 15);
 			}
 
-			this.active = level > 0 && !items.get(0).isEmpty() && !items.get(1).isEmpty() && items.get(2).isEmpty();
+			// only active if there's sunlight, there's a specimen and some cerate, and the output slot is empty
+			boolean active = level > 0 && !items.get(0).isEmpty() && !items.get(1).isEmpty() && items.get(2).isEmpty();
 
+			// set the block state to match the active property if necessary.
 			BlockState state = getBlockState();
 			if (MutationAcceleratorBlock.isActive(state) != active)
 				MutationAcceleratorBlock.setActive(world, pos, state, active);
 
-			if (active && world.getRandom().nextInt(1200) == 0)
+			// averages to one mutation per minute at light level 15. time per mutation increases by 30 seconds per
+			// level after that
+			if (active && world.getRandom().nextInt(600 * (17 - level)) == 0)
 			{
 				ItemStack specimenStack = items.get(0);
 				ItemStack cerateStack = items.get(1);
 				Set<MutationAcceleratorRecipe> trees;
+				// default result is dead bush
 				ItemStack result = Items.DEAD_BUSH.getDefaultInstance();
-				if (world.rand.nextDouble() < 0.5 && (trees = populateMergeTreeIfNeeded(world)) != null)
+				// 50% chance for dead bush. if there is no mutation tree for this world, dead bush.
+				if (world.rand.nextDouble() < 0.5 && (trees = populateMutationTreeIfNeeded(world)) != null)
 				{
 					result = null;
 					Item specimen = specimenStack.getItem();
+					// iterate through the mutation trees until we find one that matches our specimen.
 					for (MutationAcceleratorRecipe mar: trees)
 						if ((result = mar.getCraftingResult(specimen, world.rand)) != null)
 							break;
 				}
+				// if a result wasn't found, an item somehow ended up in the specimen slot which shouldn't have. there's
+				// no defined result, so give them nothing...
 				if (result == null)
 					result = ItemStack.EMPTY;
+				// decrease item stacks by one
 				specimenStack = decrementItemStack(specimenStack);
 				cerateStack = decrementItemStack(cerateStack);
+				// overwrite the old item stacks with the new ones
 				setInventorySlotContents(0, specimenStack);
 				setInventorySlotContents(1, cerateStack);
 				setInventorySlotContents(2, result);
+				// send the "pop!" and sparkle effect to the client
 				onItemMutated(level);
+				// our inventory chaged, so mark dirty
 				markDirty();
 			}
 		}
@@ -274,15 +304,7 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	@Override
 	public int[] getSlotsForFace(Direction face)
 	{
-		switch (face)
-		{
-			case UP:
-				return new int[] {0};
-			case DOWN:
-				return new int[] {2};
-			default:
-				return new int[] {1};
-		}
+		return face == Direction.DOWN ? DOWN_SLOTS : TOP_AND_SIDE_SLOTS;
 	}
 
 	@Override
@@ -294,12 +316,14 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, Direction face)
 	{
+		// hoppers can only extract from the output slot
 		return index == 2;
 	}
 
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
 	{
+		// prevent forge from handling hopper extraction....
 		if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 			return LazyOptional.empty();
 		return super.getCapability(cap, side);
