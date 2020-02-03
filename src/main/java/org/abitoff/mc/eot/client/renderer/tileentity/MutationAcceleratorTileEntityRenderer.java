@@ -37,7 +37,8 @@ public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<Mu
 			float blockScale = 0.25f;
 			float bobScale = 0.0075f;
 			float invFreq = 50;
-			float bob = (float) Math.sin((getWorld().getGameTime() + partialTicks) / invFreq) * bobScale;
+			float bob = (float) Math.sin((getWorld().getGameTime() + partialTicks) / invFreq + tileEntity.renderOffset)
+					* bobScale;
 
 			GlStateManager.pushMatrix();
 			GlStateManager.translatef((float) x + 0.5f, (float) y + 0.4375f + bob, (float) z + 0.5f);
@@ -68,7 +69,7 @@ public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<Mu
 			float b = 1;
 			float a = 0.625f;
 			double radius = 0.375;
-			double theta = (getWorld().getGameTime() + (double) partialTicks) / 50;
+			double theta = (getWorld().getGameTime() + (double) partialTicks) / 50 + tileEntity.renderOffset;
 			Vec3d p1 = new Vec3d(radius * Math.cos(theta), 0, radius * Math.sin(theta));
 			Vec3d p2 = new Vec3d(-p1.z, 0, p1.x);
 			Vec3d p3 = p1.scale(-1);

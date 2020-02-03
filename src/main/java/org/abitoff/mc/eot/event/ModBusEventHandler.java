@@ -14,6 +14,7 @@ import org.abitoff.mc.eot.items.MutationAcceleratorItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.network.EOTNetworkChannel;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
+import org.abitoff.mc.eot.network.play.client.CMutationAcceleratorItemsRequestPacket;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorItemsChangedPacket;
 import org.abitoff.mc.eot.recipe.EOTShapedRecipe;
 import org.abitoff.mc.eot.recipe.EOTShapelessRecipe;
@@ -72,6 +73,8 @@ public class ModBusEventHandler
 		EOTNetworkChannel.register(SMutationAcceleratorMutationPacket.class, SMutationAcceleratorMutationPacket::new);
 		EOTNetworkChannel.register(SMutationAcceleratorItemsChangedPacket.class,
 				SMutationAcceleratorItemsChangedPacket::new);
+		EOTNetworkChannel.register(CMutationAcceleratorItemsRequestPacket.class,
+				CMutationAcceleratorItemsRequestPacket::new);
 
 		// Register WorldType
 		WorldTypeEOT.get();

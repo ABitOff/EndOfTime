@@ -15,6 +15,7 @@ import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.network.EOTNetworkChannel;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
+import org.abitoff.mc.eot.network.play.client.CMutationAcceleratorItemsRequestPacket;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorItemsChangedPacket;
 import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 
@@ -36,12 +37,15 @@ import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -67,9 +71,25 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 	private Item specimen = null;
 	private Item result = null;
 
+	@OnlyIn(Dist.CLIENT)
+	private boolean requestedItemsFromServer = false;
+	@OnlyIn(Dist.CLIENT)
+	public final double renderOffset = Math.random() * 2.0 * Math.PI;
+
 	public MutationAcceleratorTileEntity()
 	{
 		super(TYPE_INSTANCE);
+	}
+
+	// setPos is always called after setWorld
+	public void setPos(BlockPos pos)
+	{
+		super.setPos(pos);
+		if (!requestedItemsFromServer && world != null && world.isRemote && pos != BlockPos.ZERO)
+		{
+			EOTNetworkChannel.sendToServer(new CMutationAcceleratorItemsRequestPacket(pos));
+			requestedItemsFromServer = true;
+		}
 	}
 
 	public void read(CompoundNBT compound)
@@ -77,6 +97,8 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 		super.read(compound);
 		this.items = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 		ItemStackHelper.loadAllItems(compound, items);
+		this.specimen = this.items.get(0).getItem();
+		this.result = this.items.get(2).getItem();
 	}
 
 	public CompoundNBT write(CompoundNBT compound)
