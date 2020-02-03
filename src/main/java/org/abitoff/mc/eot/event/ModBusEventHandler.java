@@ -6,12 +6,10 @@ import java.util.stream.Collectors;
 
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.EndOfTime;
-import org.abitoff.mc.eot.block.MutatedCropBlock;
 import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.client.gui.screen.inventory.MutationAcceleratorScreen;
 import org.abitoff.mc.eot.client.renderer.tileentity.MutationAcceleratorTileEntityRenderer;
 import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
-import org.abitoff.mc.eot.items.MutatedCropItem;
 import org.abitoff.mc.eot.items.MutationAcceleratorItem;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.network.EOTNetworkChannel;
@@ -124,7 +122,6 @@ public class ModBusEventHandler
 	@SubscribeEvent
 	public static void onBlockRegistryEvent(RegistryEvent.Register<Block> event)
 	{
-		event.getRegistry().register(MutatedCropBlock.get());
 		event.getRegistry().register(MutationAcceleratorBlock.get());
 	}
 
@@ -132,7 +129,6 @@ public class ModBusEventHandler
 	public static void onItemRegistryEvent(RegistryEvent.Register<Item> event)
 	{
 		event.getRegistry().register(MutativeCerateItem.get());
-		event.getRegistry().register(MutatedCropItem.get());
 		event.getRegistry().register(MutationAcceleratorItem.get());
 	}
 

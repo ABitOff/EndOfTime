@@ -23,7 +23,6 @@
         "lava-river-biome": "lava_river",
         "eot-desert-biome": "eot_desert",
         "mutative-cerate": "mutative_cerate",
-        "mutated-crop": "mutated_crop",
         "mutation-accelerator-serializer": "crafting_special_eot_mutation_accelerator",
         "mutation-accelerator-container": "mutation_accelerator_container",
         "mutation-accelerator-te": "mutation_accelerator_tile_entity",
