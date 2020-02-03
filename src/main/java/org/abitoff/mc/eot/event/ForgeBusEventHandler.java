@@ -1,9 +1,14 @@
 package org.abitoff.mc.eot.event;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import org.abitoff.mc.eot.Constants;
 import org.abitoff.mc.eot.EndOfTime;
+import org.abitoff.mc.eot.network.EOTNetworkChannel;
+import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorItemsChangedPacket;
+import org.abitoff.mc.eot.tileentity.MutationAcceleratorTileEntity;
 import org.abitoff.mc.eot.world.WorldTypeEOT;
 import org.abitoff.mc.eot.world.dimension.DimensionEOT;
 import org.apache.logging.log4j.LogManager;
@@ -26,17 +31,20 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.ServerProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,6 +52,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 /**
  * Handles modifying DimensionType.OVERWORLD to inject our own custom Dimension, rather than using the default overworld
@@ -172,6 +181,29 @@ public class ForgeBusEventHandler
 		ZombieEntity zombie = (ZombieEntity) entity;
 		zombie.goalSelector.addGoal(4, new RestrictSunGoal(zombie));
 		zombie.goalSelector.addGoal(4, new FleeSunGoal(zombie, 1.0D));
+	}
+
+	@SubscribeEvent
+	public static void onChunkWatchEvent(ChunkWatchEvent.Watch event)
+	{
+		LOGGER.info("{} is watching chunk ({}, {}).", event.getPlayer().getName().getString(), event.getPos().x,
+				event.getPos().z);
+		ChunkPos pos = event.getPos();
+		Chunk c = event.getWorld().getChunk(pos.x, pos.z);
+		if (c != null)
+		{
+			Map<BlockPos, TileEntity> tileEntities = c.getTileEntityMap();
+			for (TileEntity te: tileEntities.values())
+			{
+				if (te instanceof MutationAcceleratorTileEntity)
+				{
+					MutationAcceleratorTileEntity mate = (MutationAcceleratorTileEntity) te;
+					EOTNetworkChannel.send(PacketDistributor.PLAYER.with(() -> event.getPlayer()),
+							new SMutationAcceleratorItemsChangedPacket(mate.getPos(), mate.getSpecimen(),
+									mate.getResult()));
+				}
+			}
+		}
 	}
 
 	/**

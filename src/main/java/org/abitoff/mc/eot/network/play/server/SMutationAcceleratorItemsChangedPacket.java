@@ -12,20 +12,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class SMutationAcceleratorSpecimenChangePacket implements EOTPacket
+public class SMutationAcceleratorItemsChangedPacket implements EOTPacket
 {
 	private BlockPos pos;
 	private Item specimen;
+	private Item result;
 
-	public SMutationAcceleratorSpecimenChangePacket()
+	public SMutationAcceleratorItemsChangedPacket()
 	{
-		this(null, null);
+		this(null, null, null);
 	}
 
-	public SMutationAcceleratorSpecimenChangePacket(BlockPos pos, Item specimen)
+	public SMutationAcceleratorItemsChangedPacket(BlockPos pos, Item specimen, Item result)
 	{
 		this.pos = pos;
 		this.specimen = specimen;
+		this.result = result;
 	}
 
 	@Override
@@ -33,6 +35,7 @@ public class SMutationAcceleratorSpecimenChangePacket implements EOTPacket
 	{
 		this.pos = buf.readBlockPos();
 		this.specimen = Item.getItemById(buf.readInt());
+		this.result = Item.getItemById(buf.readInt());
 	}
 
 	@Override
@@ -40,6 +43,7 @@ public class SMutationAcceleratorSpecimenChangePacket implements EOTPacket
 	{
 		buf.writeBlockPos(pos);
 		buf.writeInt(Item.getIdFromItem(specimen));
+		buf.writeInt(Item.getIdFromItem(result));
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class SMutationAcceleratorSpecimenChangePacket implements EOTPacket
 				ClientWorld w = Minecraft.getInstance().world;
 				TileEntity te = w.getTileEntity(pos);
 				if (te != null && te instanceof MutationAcceleratorTileEntity)
-					((MutationAcceleratorTileEntity) te).onSpecimenChangedPacketReceived(specimen);
+					((MutationAcceleratorTileEntity) te).onSpecimenChangedPacketReceived(specimen, result);
 			});
 		}
 		ctx.setPacketHandled(true);

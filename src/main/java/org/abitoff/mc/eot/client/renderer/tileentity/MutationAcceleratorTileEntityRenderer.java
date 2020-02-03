@@ -1,87 +1,58 @@
 package org.abitoff.mc.eot.client.renderer.tileentity;
 
-import java.util.Random;
-
 import org.abitoff.mc.eot.Constants;
+import org.abitoff.mc.eot.block.MutationAcceleratorBlock;
 import org.abitoff.mc.eot.tileentity.MutationAcceleratorTileEntity;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
+@SuppressWarnings("deprecation")
 public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<MutationAcceleratorTileEntity>
 {
-	private static ItemEntity customItem;
-	private ItemRenderer itemRenderer =
-			new ItemRenderer(Minecraft.getInstance().getRenderManager(), Minecraft.getInstance().getItemRenderer())
-			{
-				@Override
-				public int getModelCount(ItemStack stack)
-				{
-					return 1;
-				}
-
-				@Override
-				public boolean shouldBob()
-				{
-					return false;
-				}
-
-				@Override
-				public boolean shouldSpreadItems()
-				{
-					return false;
-				}
-			};
+	private ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 
 	@Override
-	public void render(MutationAcceleratorTileEntity tileEntityIn, double x, double y, double z, float partialTicks,
+	public void render(MutationAcceleratorTileEntity tileEntity, double x, double y, double z, float partialTicks,
 			int destroyStage)
 	{
-		ItemStack specimen = ItemStack.EMPTY;
-		if (tileEntityIn.getSpecimen() != null)
-			specimen = tileEntityIn.getSpecimen().getDefaultInstance();
+		ItemStack displayItem = ItemStack.EMPTY;
+		if (tileEntity.getResult() != null)
+			displayItem = tileEntity.getResult().getDefaultInstance();
+		if (tileEntity.getSpecimen() != null && displayItem.isEmpty())
+			displayItem = tileEntity.getSpecimen().getDefaultInstance();
 
-		if (!specimen.isEmpty())
+		if (!displayItem.isEmpty())
 		{
-			float blockScale = 0.5f;
+			float blockScale = 0.25f;
+			float bobScale = 0.0075f;
+			float invFreq = 50;
+			float bob = (float) Math.sin((getWorld().getGameTime() + partialTicks) / invFreq) * bobScale;
 
 			GlStateManager.pushMatrix();
-			GlStateManager.translatef((float) x + 0.5f, (float) y + 0.375f, (float) z + 0.5f);
+			GlStateManager.translatef((float) x + 0.5f, (float) y + 0.4375f + bob, (float) z + 0.5f);
 
 			GlStateManager.pushMatrix();
-			// GlStateManager.rotatef(-90, 0F, 0F, 1F);
-			GlStateManager.rotatef(-23, 0F, 1F, 0F);
+			GlStateManager.rotatef(-90, 1F, 0F, 0F);
 			GlStateManager.scalef(blockScale, blockScale, blockScale);
 
-			if (customItem == null || customItem.world != getWorld())
-				customItem = new ItemEntity(EntityType.ITEM, this.getWorld());
-			if (this.getWorld().getGameTime() % 50 == 0)
-			{
-				// System.out.println(customItem.getAge());
-			}
-			customItem.prevRotationPitch = 0;
-			customItem.prevRotationYaw = 0;
-			customItem.setItem(specimen);
-
-			this.itemRenderer.doRender(customItem, 0, 0, 0, 0, 0);
+			this.itemRenderer.renderItem(displayItem, ItemCameraTransforms.TransformType.FIXED);
 
 			GlStateManager.popMatrix();
 			GlStateManager.popMatrix();
 		}
-		// if (MutationAcceleratorBlock.isActive(tileEntityIn.getBlockState()))
+		if (MutationAcceleratorBlock.isActive(tileEntity.getBlockState()))
 		{
-			Vec3d colors = getWorld().getSkyColor(tileEntityIn.getPos(), partialTicks);
 			this.bindTexture(new ResourceLocation(Constants.MOD_ID,
 					"textures/tileentity/mutation_accelerator_magnification.png"));
 			GlStateManager.pushMatrix();

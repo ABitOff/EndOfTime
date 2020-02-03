@@ -15,7 +15,7 @@ import org.abitoff.mc.eot.inventory.container.MutationAcceleratorContainer;
 import org.abitoff.mc.eot.items.MutativeCerateItem;
 import org.abitoff.mc.eot.network.EOTNetworkChannel;
 import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorMutationPacket;
-import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorSpecimenChangePacket;
+import org.abitoff.mc.eot.network.play.server.SMutationAcceleratorItemsChangedPacket;
 import org.abitoff.mc.eot.recipe.MutationAcceleratorRecipe;
 
 import com.google.common.collect.ImmutableSet;
@@ -65,6 +65,7 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 
 	private NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
 	private Item specimen = null;
+	private Item result = null;
 
 	public MutationAcceleratorTileEntity()
 	{
@@ -291,7 +292,13 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 			if ((tempSpecimen = items.get(0).getItem()) != specimen)
 			{
 				specimen = tempSpecimen;
-				onSpecimenChanged();
+				onItemsChanged();
+			}
+			Item tempResult;
+			if ((tempResult = items.get(2).getItem()) != result)
+			{
+				result = tempResult;
+				onItemsChanged();
 			}
 		}
 	}
@@ -310,22 +317,28 @@ public class MutationAcceleratorTileEntity extends LockableTileEntity implements
 				new SMutationAcceleratorMutationPacket(pos, level));
 	}
 
-	private void onSpecimenChanged()
+	private void onItemsChanged()
 	{
 		assert !world.isRemote;
 		Chunk c = world.getChunkAt(pos);
 		EOTNetworkChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> c),
-				new SMutationAcceleratorSpecimenChangePacket(pos, specimen));
+				new SMutationAcceleratorItemsChangedPacket(pos, specimen, result));
 	}
 
-	public void onSpecimenChangedPacketReceived(Item item)
+	public void onSpecimenChangedPacketReceived(Item item, Item result)
 	{
 		this.specimen = item;
+		this.result = result;
 	}
 
 	public Item getSpecimen()
 	{
 		return this.specimen;
+	}
+
+	public Item getResult()
+	{
+		return this.result;
 	}
 
 	@Override
