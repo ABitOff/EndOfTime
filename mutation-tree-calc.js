@@ -21,17 +21,23 @@ for (const node of mutationTree) {
 }
 
 const groupInv = {};
+const groupStrings = [];
 for (const group of Object.entries(groups)) {
+    const pairStrings = group[1].sort((a, b) => b[1] - a[1]).map(p => `{"${itm(p[0])}": ${num(p[1])}}`);
+    groupStrings.push(`"${grp(group[0])}": [${pairStrings.join(',')}]`);
     for (const pair of group[1]) {
         if (groupInv[pair[0]]) groupInv[pair[0]].push(group[0]);
         else groupInv[pair[0]] = [group[0]];
     }
 }
+console.log('Compiled groups:');
+console.log(`\t${groupStrings.join(',\n')}\n\t`);
+console.log(`Each item's groups:`);
 for (const item of Object.entries(groupInv)) {
-    console.log(`"${item[0]}": ["${item[1].join('", "')}"],`);
+    console.log(`\t"${itm(item[0])}": ["${item[1].map(g => grp(g)).join('", "')}"],`);
 }
-console.log();
 
+console.log('\nMerging info:');
 for (const node of mutationTree) {
     const results = [];
     const specimen = node.specimen;
@@ -53,7 +59,7 @@ for (const node of mutationTree) {
             weight = result.weight === undefined ? 1 : result.weight;
             mergeType = result.merge === undefined ? 'new' : result.merge;
         }
-        console.log(`${specimen}.${group ? group : item} = ${mergeType}(${weight})`);
+        console.log(`\t${itm(specimen)}.${group ? grp(group) : itm(item)} = ${fnc(mergeType)}(${num(weight)})`);
         logged = true;
         results.push({
             group,
@@ -106,7 +112,8 @@ for (const node of mutationTree) {
         pad(m[3], maxMergesStrLengths[3]), pad(m[4], maxMergesStrLengths[4]), pad(m[5], maxMergesStrLengths[5]),
     ])
     for (const merge of merges) {
-        console.log(`for ${merge[0]}'s ${merge[1]} result, merging ${merge[2]} and ${merge[3]} using ${merge[4]}. old = ${merge[2]} new = ${merge[5]}`);
+        console.log(`\tfor ${itm(merge[0])}'s ${itm(merge[1])} result, merging ${num(merge[2])} and ${num(merge[3])}`,
+            `using ${fnc(merge[4])}. old = ${num(merge[2])} new = ${num(merge[5])}`);
         logged = true;
     }
     if (logged) console.log(); // \n
@@ -114,16 +121,17 @@ for (const node of mutationTree) {
     finalTree[specimen] = Object.entries(unique).map(e => [e[0], e[1] / sum]);
 }
 
+console.log('\nFinal branch percentages:')
 for (const e of Object.entries(finalTree)) {
     if (e[1].length === 0) continue;
-    console.log(`${e[0]}:`);
+    console.log(`\t${itm(e[0])}:`);
     e[1] = e[1].sort((a, b) => {
         let cmp = Math.sign(b[1] - a[1]);
         if (cmp !== 0) return cmp;
         return a[0].localeCompare(b[0]);
     });
     for (const p of e[1]) {
-        console.log(`\t${p[0]}: ${Math.round(p[1] * 100000) / 1000}%`);
+        console.log(`\t\t${itm(p[0])}: ${num(String(Math.round(p[1] * 100000) / 1000))}%`);
     }
 }
 
@@ -132,4 +140,20 @@ function pad(s, n) {
         s += ' ';
     }
     return s;
+}
+
+function itm(s) {
+    return `\u001b[32m${s}\u001b[0m`
+}
+
+function grp(s) {
+    return `\u001b[35m${s}\u001b[0m`
+}
+
+function num(s) {
+    return `\u001b[33m${s}\u001b[0m`
+}
+
+function fnc(s) {
+    return `\u001b[36m${s}\u001b[0m`
 }

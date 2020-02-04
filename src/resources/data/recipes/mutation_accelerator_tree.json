@@ -23,6 +23,10 @@
                 "group": "bushes",
                 "weight": 0.05,
                 "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
+                "merge": "max"
             }]
         },
         {
@@ -51,6 +55,10 @@
                 "group": "bushes",
                 "weight": 0.05,
                 "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
+                "merge": "max"
             }]
         },
         {
@@ -76,6 +84,10 @@
             }, {
                 "group": "bushes",
                 "weight": 0.05,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
                 "merge": "max"
             }]
         },
@@ -103,6 +115,10 @@
                 "group": "bushes",
                 "weight": 0.05,
                 "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
+                "merge": "max"
             }]
         },
         {
@@ -128,6 +144,10 @@
             }, {
                 "group": "bushes",
                 "weight": 0.05,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
                 "merge": "max"
             }]
         },
@@ -155,6 +175,10 @@
                 "group": "bushes",
                 "weight": 0.05,
                 "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.005,
+                "merge": "max"
             }]
         }, {
             "specimen": "minecraft:cocoa_beans",
@@ -165,7 +189,17 @@
                 "group": "food-yielding",
                 "weight": 0.25
             }],
-            "results": []
+            "results": [{
+                "group": "seeds"
+            }, {
+                "group": "fungal",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.1,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:bamboo",
@@ -176,7 +210,17 @@
                 "group": "grasses",
                 "weight": 0.25
             }],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "group": "flowers",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.5,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:sugar_cane",
@@ -184,7 +228,17 @@
                 "group": "grasses",
                 "weight": 0.5
             }],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "group": "flowers",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.5,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:cactus",
@@ -192,7 +246,17 @@
                 "group": "spiny",
                 "weight": 2
             }],
-            "results": []
+            "results": [{
+                "group": "spiny",
+                "weight": 1.2
+            }, {
+                "group": "grasses",
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.9,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:kelp",
@@ -200,27 +264,135 @@
                 "group": "tall",
                 "weight": 0.25
             }, "water"],
-            "results": []
+            "results": [{
+                "item": "minecraft:kelp",
+                "weight": 1.25
+            }, {
+                "group": "water",
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.25,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "coral",
+                "weight": 0.05,
+                "merge": "min"
+            }]
         },
         {
             "specimen": "minecraft:grass",
             "groups": ["grasses"],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "saplings",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "crops",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.025,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:tall_grass",
             "groups": ["grasses"],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "saplings",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "crops",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.075,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:fern",
             "groups": ["grasses", "bushes"],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "item": "minecraft:spruce_sapling",
+                "weight": 0.8
+            }, {
+                "group": "bushes",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "saplings",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "crops",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.025,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:large_fern",
             "groups": ["grasses", "bushes"],
-            "results": []
+            "results": [{
+                "group": "grasses"
+            }, {
+                "item": "minecraft:spruce_sapling",
+                "weight": 0.8
+            }, {
+                "group": "bushes",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "flowers",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "crops",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "tall",
+                "weight": 0.075,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:seagrass",
@@ -228,72 +400,264 @@
                 "group": "grasses",
                 "weight": 0.25
             }, "water"],
-            "results": []
+            "results": [{
+                "group": "water"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:lily_pad",
             "groups": ["water"],
-            "results": []
+            "results": [{
+                "group": "water"
+            }]
         },
         {
             "specimen": "minecraft:dandelion",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:poppy",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:blue_orchid",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:allium",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:azure_bluet",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:red_tulip",
             "groups": ["flowers", "tulip"],
-            "results": []
+            "results": [{
+                "group": "tulip",
+                "weight": 2
+            }, {
+                "group": "flowers",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:orange_tulip",
             "groups": ["flowers", "tulip"],
-            "results": []
+            "results": [{
+                "group": "tulip",
+                "weight": 2
+            }, {
+                "group": "flowers",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:white_tulip",
             "groups": ["flowers", "tulip"],
-            "results": []
+            "results": [{
+                "group": "tulip",
+                "weight": 2
+            }, {
+                "group": "flowers",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:pink_tulip",
             "groups": ["flowers", "tulip"],
-            "results": []
+            "results": [{
+                "group": "tulip",
+                "weight": 2
+            }, {
+                "group": "flowers",
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:oxeye_daisy",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:cornflower",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:lily_of_the_valley",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:wither_rose",
@@ -301,65 +665,218 @@
                 "group": "flowers",
                 "weight": 0.05
             }],
-            "results": []
+            "results": ["minecraft:wither_rose", {
+                "group": "alien",
+                "weight": 0.95
+            }, {
+                "group": "flowers",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.09375,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.015625,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.00625,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:sunflower",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:lilac",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:rose_bush",
             "groups": ["flowers", "bushes"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:peony",
             "groups": ["flowers"],
-            "results": []
+            "results": [{
+                "group": "flowers"
+            }, {
+                "group": "grasses",
+                "weight": 0.75,
+                "merge": "max"
+            }, {
+                "group": "bushes",
+                "weight": 0.125,
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:oak_sapling",
-            "groups": [{
-                "group": "saplings",
-                "weight": 3
-            }, "bushes"],
-            "results": []
+            "groups": ["saplings", "bushes"],
+            "results": [{
+                "group": "saplings"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:spruce_sapling",
             "groups": ["saplings", "bushes"],
-            "results": []
+            "results": [{
+                "group": "saplings"
+            }, {
+                "item": "minecraft:fern",
+                "weight": 0.625
+            }, {
+                "item": "minecraft:large_fern",
+                "weight": 0.625
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:birch_sapling",
             "groups": ["saplings", "bushes"],
-            "results": []
+            "results": [{
+                "group": "saplings"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:jungle_sapling",
             "groups": ["saplings", "bushes"],
-            "results": []
+            "results": [{
+                "group": "saplings"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }, {
+                "item": "minecraft:cocoa_beans",
+                "weight": 0.05
+            }]
         },
         {
             "specimen": "minecraft:acacia_sapling",
             "groups": ["saplings", "bushes"],
-            "results": []
+            "results": [{
+                "group": "saplings"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:dark_oak_sapling",
             "groups": ["saplings", "bushes"],
-            "results": []
+            "results": [{
+                "group": "saplings"
+            }, {
+                "group": "bushes",
+                "weight": 0.5,
+                "merge": "max"
+            }, {
+                "group": "grasses",
+                "weight": 0.25,
+                "merge": "max"
+            }, {
+                "group": "fungal",
+                "weight": 0.05
+            }]
         },
         {
             "specimen": "minecraft:sweet_berries",
             "groups": ["bushes", "food-yielding", "spiny"],
-            "results": []
+            "results": [{
+                "group": "spiny"
+            }, {
+                "group": "bushes",
+                "merge": "max"
+            }, {
+                "group": "food-yielding",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:sea_pickle",
@@ -367,17 +884,36 @@
                 "group": "plant-like",
                 "weight": 0.5
             }, "water"],
-            "results": []
+            "results": [{
+                "group": "water"
+            }, {
+                "item": "minecraft:brown_mushroom",
+                "weight": 0.5
+            }, {
+                "item": "minecraft:red_mushroom",
+                "weight": 0.5
+            }, {
+                "group": "plant-like",
+                "weight": 0.05,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:brown_mushroom",
             "groups": ["plant-like", "fungal"],
-            "results": []
+            "results": [{
+                "group": "plant-like"
+            }]
         },
         {
             "specimen": "minecraft:red_mushroom",
             "groups": ["plant-like", "fungal"],
-            "results": []
+            "results": [{
+                "group": "plant-like"
+            }, {
+                "item": "minecraft:wither_rose",
+                "weight": 0.125
+            }]
         },
         {
             "specimen": "minecraft:chorus_flower",
@@ -388,7 +924,12 @@
                 "group": "alien",
                 "weight": 0.5
             }],
-            "results": []
+            "results": [{
+                "group": "plant-like"
+            }, {
+                "item": "minecraft:wither_rose",
+                "weight": 0.125
+            }]
         },
         {
             "specimen": "minecraft:nether_wart",
@@ -399,7 +940,12 @@
                 "group": "fungal",
                 "weight": 0.125
             }, "alien"],
-            "results": []
+            "results": [{
+                "group": "plant-like"
+            }, {
+                "item": "minecraft:wither_rose",
+                "weight": 0.125
+            }]
         },
         {
             "specimen": "minecraft:tube_coral",
@@ -407,7 +953,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:brain_coral",
@@ -415,7 +971,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:bubble_coral",
@@ -423,7 +989,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:fire_coral",
@@ -431,7 +1007,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:horn_coral",
@@ -439,7 +1025,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:tube_coral_fan",
@@ -447,7 +1043,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:brain_coral_fan",
@@ -455,7 +1061,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:bubble_coral_fan",
@@ -463,7 +1079,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:fire_coral_fan",
@@ -471,7 +1097,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         },
         {
             "specimen": "minecraft:horn_coral_fan",
@@ -479,7 +1115,17 @@
                 "group": "water",
                 "weight": 0.1
             }],
-            "results": []
+            "results": [{
+                "group": "coral"
+            }, {
+                "group": "water",
+                "weight": 0.1,
+                "merge": "max"
+            }, {
+                "group": "plant-like",
+                "weight": 0.01,
+                "merge": "max"
+            }]
         }
     ]
 }
