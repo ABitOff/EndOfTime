@@ -56,9 +56,7 @@ public class MutationAcceleratorBlock extends ContainerBlock
 
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
 	{
-		// hack to make light pass through the sides, but not the bottom. also allows the sky light level at the same
-		// position as the block to be 15. otherwise it would be 14, making calculating LEVEL awkward.
-		return Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 15.99999D, 16.0D);
+		return Block.makeCuboidShape(0, 0, 0, 16, 15, 16);
 	}
 
 	public boolean func_220074_n(BlockState state)

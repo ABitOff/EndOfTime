@@ -41,7 +41,7 @@ public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<Mu
 					* bobScale;
 
 			GlStateManager.pushMatrix();
-			GlStateManager.translatef((float) x + 0.5f, (float) y + 0.4375f + bob, (float) z + 0.5f);
+			GlStateManager.translatef((float) x + 0.5f, (float) y + 0.40625f + bob, (float) z + 0.5f);
 
 			GlStateManager.pushMatrix();
 			GlStateManager.rotatef(-90, 1F, 0F, 0F);
@@ -61,7 +61,7 @@ public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<Mu
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
 					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.disableLighting();
-			GlStateManager.translated(x + 0.5, y + 0.5, z + 0.5);
+			GlStateManager.translated(x + 0.5, y + 0.4375, z + 0.5);
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferbuilder = tessellator.getBuffer();
 			float r = 1;
@@ -70,32 +70,41 @@ public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<Mu
 			float a = 0.625f;
 			double radius = 0.375;
 			double theta = (getWorld().getGameTime() + (double) partialTicks) / 50 + tileEntity.renderOffset;
-			Vec3d p1 = new Vec3d(radius * Math.cos(theta), 0, radius * Math.sin(theta));
-			Vec3d p2 = new Vec3d(-p1.z, 0, p1.x);
-			Vec3d p3 = p1.scale(-1);
-			Vec3d p4 = p2.scale(-1);
+			double top = 0.5;
+			// p1
+			double p1x = radius * Math.cos(theta);
+			double p1z = radius * Math.sin(theta);
+			// p1 rotated 90 degrees
+			double p2x = -p1z;
+			double p2z = p1x;
+			// p1 rotated 180 degrees
+			double p3x = -p1x;
+			double p3z = -p1z;
+			// p1 rotated 270 degrees
+			double p4x = p1z;
+			double p4z = -p1x;
 			GlStateManager.color4f(r, g, b, a);
 			bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
 			bufferbuilder.pos(0, 0, 0).endVertex();
-			bufferbuilder.pos(p1.x, 0.5, p1.z).endVertex();
-			bufferbuilder.pos(p2.x, 0.5, p2.z).endVertex();
+			bufferbuilder.pos(p1x, top, p1z).endVertex();
+			bufferbuilder.pos(p2x, top, p2z).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
-			bufferbuilder.pos(p2.x, 0.5, p2.z).endVertex();
-			bufferbuilder.pos(p3.x, 0.5, p3.z).endVertex();
+			bufferbuilder.pos(p2x, top, p2z).endVertex();
+			bufferbuilder.pos(p3x, top, p3z).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
-			bufferbuilder.pos(p3.x, 0.5, p3.z).endVertex();
-			bufferbuilder.pos(p4.x, 0.5, p4.z).endVertex();
+			bufferbuilder.pos(p3x, top, p3z).endVertex();
+			bufferbuilder.pos(p4x, top, p4z).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
-			bufferbuilder.pos(p4.x, 0.5, p4.z).endVertex();
-			bufferbuilder.pos(p1.x, 0.5, p1.z).endVertex();
+			bufferbuilder.pos(p4x, top, p4z).endVertex();
+			bufferbuilder.pos(p1x, top, p1z).endVertex();
 			bufferbuilder.pos(0, 0, 0).endVertex();
-			bufferbuilder.pos(p4.x, 0.5, p4.z).endVertex();
-			bufferbuilder.pos(p3.x, 0.5, p3.z).endVertex();
-			bufferbuilder.pos(p2.x, 0.5, p2.z).endVertex();
-			bufferbuilder.pos(p1.x, 0.5, p1.z).endVertex();
+			bufferbuilder.pos(p4x, top, p4z).endVertex();
+			bufferbuilder.pos(p3x, top, p3z).endVertex();
+			bufferbuilder.pos(p2x, top, p2z).endVertex();
+			bufferbuilder.pos(p1x, top, p1z).endVertex();
 			tessellator.draw();
 			GlStateManager.popMatrix();
 		}
