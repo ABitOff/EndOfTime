@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 
 @SuppressWarnings("deprecation")
 public class MutationAcceleratorTileEntityRenderer extends TileEntityRenderer<MutationAcceleratorTileEntity>

@@ -13,8 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.abitoff.mc.eot.Constants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
@@ -96,8 +94,6 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 	private static final class MutationAcceleratorRecipeSerializer
 			extends SpecialRecipeSerializer<MutationAcceleratorRecipe>
 	{
-		private static final Logger LOGGER = LogManager.getLogger(MutationAcceleratorRecipeSerializer.class);
-
 		public MutationAcceleratorRecipeSerializer()
 		{
 			super(null);
@@ -180,8 +176,6 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 								"Expected each entry of \"results\" to be a String or a JsonObject, was "
 										+ JSONUtils.toString(result));
 					}
-					// LOGGER.info("{}.{} = {}({})", specimen.getRegistryName(),
-					// group == null ? item.getRegistryName() : group, mergeType.name(), weight);
 					results.add(new Result(group, item, weight, mergeType));
 				}
 
@@ -233,9 +227,6 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 									actualValue = newValue;
 									break;
 							}
-							// LOGGER.info("for {}, merging {} and {} using {}. old = {}. new = {}.",
-							// p.getFirst().getRegistryName(), oldValue, newValue, r.merge.name(), previous[0],
-							// actualValue);
 							return actualValue;
 						});
 						// add the new weight to the sum, subtracting the old weight if necessary.
@@ -251,27 +242,6 @@ public class MutationAcceleratorRecipe extends SpecialRecipe
 						.map(e -> new Pair<Item, Float>(e.getKey(), e.getValue() / sum)).collect(Collectors.toList());
 				finalTree.put(specimen, finalResuls);
 			}
-
-			// LOGGER.info("LOGGING MUTATION TREE");
-			// for (Entry<Item, List<Pair<Item, Float>>> e: finalTree.entrySet())
-			// {
-			// if (e.getValue().size() == 0)
-			// continue;
-			// LOGGER.info("{}:", e.getKey().getRegistryName());
-			// e.getValue().sort((a, b) ->
-			// {
-			// int compare = Float.compare(b.getSecond(), a.getSecond());
-			// if (compare != 0)
-			// return compare;
-			// return a.getFirst().getRegistryName().toString()
-			// .compareToIgnoreCase(b.getFirst().getRegistryName().toString());
-			// });
-			// for (Pair<Item, Float> p: e.getValue())
-			// {
-			// LOGGER.info("\t{}: {}%", p.getFirst().getRegistryName(),
-			// (float) Math.round(p.getSecond() * 100000f) / 1000f);
-			// }
-			// }
 
 			return new MutationAcceleratorRecipe(recipeId, ImmutableMap.copyOf(finalTree));
 		}
